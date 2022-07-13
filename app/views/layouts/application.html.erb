@@ -10,7 +10,32 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
   </head>
 
-  <body class="container-fluid">
-    <%= yield %>
+  <body>
+	<div class="position-relative" style="z-index:1;">
+	  <!-- flash notice message -->
+	  <% if notice %>
+		<div class="alert alert-success alert-dismissible fade show" role="alert">
+		  <strong>Notice</strong> <%= notice %>
+		  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	  <% end %>
+
+	  <!-- flash alert message -->
+	  <% if alert %>
+		<div class="alert alert-danger alert-dismissible fade show" role="alert">
+		  <strong>Alert</strong> <%= alert %>
+		  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	  <% end %>
+	</div>
+
+    <main class="container-fluid">
+      <%= yield %>
+	</main>
+
+    <footer class="container-fluid mt-3 text-center">
+	  <hr />
+	  &copy; MITRE 2022
+    </footer>
   </body>
 </html>

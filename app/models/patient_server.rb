@@ -1,0 +1,2 @@
+class PatientServer < ApplicationRecord
+end
