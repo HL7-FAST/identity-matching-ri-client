@@ -1,6 +1,21 @@
 # Identity Matching RI Client
 Identity Matching Reference Implementation client web app as required by the HL7 FAST project (for healthcare interoperability scaling).
 
+## Dependencies
+ - [Ruby 3.1.2](https://www.ruby-lang.org/en/)
+ - [Ruby Bundler](https://bundler.io)
+ - [SQLite](https://www.sqlite.org/index.html)
+ - [Sass](https://sass-lang.com/)
+ - [Yarn](https://yarnpkg.com/)
+ - [ESBuild](https://esbuild.github.io/)
+
+## Quickstart
+From in repo,
+```
+bundle install
+rails db:migrate
+./bin/dev
+```
 
 ## License
 
