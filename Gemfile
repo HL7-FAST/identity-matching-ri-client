@@ -70,3 +70,10 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
 end
+
+# Use FHIR gems
+gem "fhir_models", "~> 4.2.1"
+#gem "fhir_client"
+
+# Use rest-client as http client
+gem "rest-client"
