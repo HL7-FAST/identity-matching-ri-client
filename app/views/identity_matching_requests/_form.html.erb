@@ -1,6 +1,6 @@
 <%= form_with(model: identity_matching_request) do |form| %>
   <% if identity_matching_request.errors.any? %>
-    <div style="color: red">
+    <div class="alert alert-danger">
       <h2><%= pluralize(identity_matching_request.errors.count, "error") %> prohibited this identity_matching_request from being saved:</h2>
 
       <ul>
@@ -11,52 +11,73 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :full_name, class: "form-label" %>
-    <%= form.text_field :full_name, class: "form-control" %>
-  </div>
+  <div class="container">
+	<div class="row mb-2">
+	  <div class="col">
+	    <%= form.text_field :full_name, class: "form-control", placeholder: "Full Name" %>
+	  </div>
 
-  <div>
-    <%= form.label :date_of_birth, class: "form-label" %>
-    <%= form.date_field :date_of_birth, class: "form-control" %>
-  </div>
+	  <div class="col">
+		<div class="container-fluid">
+		  <div class="row">
+			<div class="col-md-3 col-4 text-center align-middle">
+			  <b class="align-middle">Date of Birth:</b>
+			</div>
+			<div class="col-md-9 col-8">
+		      <%= form.date_field :date_of_birth, class: "form-control", aria_label: "date_of_birth", aria_describedby: "date_of_birth_label" %>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</div>
 
-  <div>
-    <%= form.label :address_line1, class: "form-label" %>
-    <%= form.text_field :address_line1, class: "form-control" %>
-  </div>
+	<hr />
 
-  <div>
-    <%= form.label :address_line2, class: "form-label" %>
-    <%= form.text_field :address_line2, class: "form-control" %>
-  </div>
+	<div class="row mb-2">
+	  <strong><%= form.label "Address", class: "form-label" %></strong>
+	</div>
 
-  <div>
-    <%= form.label :city, class: "form-label" %>
-    <%= form.text_field :city, class: "form-control" %>
-  </div>
+	<div class="row mb-2">
+	  <div class="col">
+	    <%= form.text_field :address_line1, class: "form-control", placeholder: "Address Line 1" %>
+	  </div>
 
-  <div>
-    <%= form.label :state, class: "form-label" %>
-    <%= form.text_field :state, class: "form-control" %>
-  </div>
+	  <div class="col">
+	    <%= form.text_field :address_line2, class: "form-control", placeholder: "Address Line 2" %>
+	  </div>
+	</div>
 
-  <div>
-    <%= form.label :zipcode, class: "form-label" %>
-    <%= form.text_field :zipcode, class: "form-control" %>
-  </div>
+	<div class="row mb-2">
+	  <div class="col">
+		<%= form.text_field :city, class: "form-control", placeholder: "City" %>
+	  </div>
 
-  <div>
-    <%= form.label :email, class: "form-label" %>
-    <%= form.email_field :email, class: "form-control" %>
-  </div>
+	  <div class="col">
+	    <%= form.text_field :state, class: "form-control", placeholder: "State" %>
+	  </div>
 
-  <div>
-    <%= form.label :mobile, class: "form-label" %>
-    <%= form.telephone_field :mobile, class: "form-control" %>
-  </div>
+	  <div class="col">
+	    <%= form.text_field :zipcode, class: "form-control", placeholder: "Zipcode" %>
+	  </div>
+    </div>
 
-  <div>
-    <%= form.submit %>
+	<hr />
+
+	<div class="row mb-2">
+	  <div class="col">
+		<%= form.email_field :email, class: "form-control", placeholder: "Email" %>
+	  </div>
+
+	  <div class="col">
+	    <%= form.telephone_field :mobile, class: "form-control", placeholder: "Phone Number" %>
+	  </div>
+	</div>
+
+	<hr />
+
+	<div class="row mb-2 justify-content-center">
+	  <%= form.submit "Submit", class: "btn btn-primary" %>
+	</div>
+
   </div>
 <% end %>
