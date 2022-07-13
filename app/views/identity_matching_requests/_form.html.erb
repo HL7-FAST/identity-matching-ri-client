@@ -1,0 +1,72 @@
+<%= form_with(model: identity_matching_request) do |form| %>
+  <% if identity_matching_request.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(identity_matching_request.errors.count, "error") %> prohibited this identity_matching_request from being saved:</h2>
+
+      <ul>
+        <% identity_matching_request.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :full_name, style: "display: block" %>
+    <%= form.text_field :full_name %>
+  </div>
+
+  <div>
+    <%= form.label :date_of_birth, style: "display: block" %>
+    <%= form.date_field :date_of_birth %>
+  </div>
+
+  <div>
+    <%= form.label :address_line1, style: "display: block" %>
+    <%= form.text_field :address_line1 %>
+  </div>
+
+  <div>
+    <%= form.label :address_line2, style: "display: block" %>
+    <%= form.text_field :address_line2 %>
+  </div>
+
+  <div>
+    <%= form.label :city, style: "display: block" %>
+    <%= form.text_field :city %>
+  </div>
+
+  <div>
+    <%= form.label :state, style: "display: block" %>
+    <%= form.text_field :state %>
+  </div>
+
+  <div>
+    <%= form.label :zipcode, style: "display: block" %>
+    <%= form.text_field :zipcode %>
+  </div>
+
+  <div>
+    <%= form.label :email, style: "display: block" %>
+    <%= form.text_field :email %>
+  </div>
+
+  <div>
+    <%= form.label :mobile, style: "display: block" %>
+    <%= form.text_field :mobile %>
+  </div>
+
+  <div>
+    <%= form.label :response_status, style: "display: block" %>
+    <%= form.number_field :response_status %>
+  </div>
+
+  <div>
+    <%= form.label :response_json, style: "display: block" %>
+    <%= form.text_area :response_json %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

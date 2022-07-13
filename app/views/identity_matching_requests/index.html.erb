@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Identity matching requests</h1>
+
+<div id="identity_matching_requests">
+  <% @identity_matching_requests.each do |identity_matching_request| %>
+    <%= render identity_matching_request %>
+    <p>
+      <%= link_to "Show this identity matching request", identity_matching_request %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New identity matching request", new_identity_matching_request_path %>

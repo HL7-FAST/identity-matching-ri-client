@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @identity_matching_request %>
+
+<div>
+  <%= link_to "Edit this identity matching request", edit_identity_matching_request_path(@identity_matching_request) %> |
+  <%= link_to "Back to identity matching requests", identity_matching_requests_path %>
+
+  <%= button_to "Destroy this identity matching request", @identity_matching_request, method: :delete %>
+</div>
