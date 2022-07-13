@@ -1,0 +1,37 @@
+Arguments: 
+  /Users/shaumikashraf/.nvm/versions/node/v18.5.0/bin/node /opt/homebrew/Cellar/yarn/1.22.19/libexec/bin/yarn.js add bootstrap@5.2.0-beta1 bootstrap-icons
+
+PATH: 
+  /Users/shaumikashraf/.rvm/gems/ruby-3.1.2/bin:/Users/shaumikashraf/.rvm/gems/ruby-3.1.2@global/bin:/Users/shaumikashraf/.rvm/rubies/ruby-3.1.2/bin:/Users/shaumikashraf/.rvm/bin:/Users/shaumikashraf/.jenv/bin:/Users/shaumikashraf/vendors/apache-maven-3.8.6/bin:/opt/homebrew/opt/openjdk/bin:/Users/shaumikashraf/.nvm/versions/node/v18.5.0/bin:/opt/homebrew/bin:/Users/shaumikashraf/.bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:/usr/local/munki:/Users/shaumikashraf/.cargo/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  18.5.0
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: unable to get local issuer certificate
+      at TLSSocket.onConnectSecure (node:_tls_wrap:1533:34)
+      at TLSSocket.emit (node:events:537:28)
+      at TLSSocket._finishInit (node:_tls_wrap:947:8)
+      at ssl.onhandshakedone (node:_tls_wrap:728:12)
+
+npm manifest: 
+  {
+    "name": "app",
+    "private": "true",
+    "scripts": {
+      "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds --public-path=assets",
+      "build:css": "sass ./app/assets/stylesheets/application.bootstrap.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
