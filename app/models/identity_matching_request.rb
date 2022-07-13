@@ -6,7 +6,11 @@ class IdentityMatchingRequest < ApplicationRecord
 
   # return pretty string for address
   def address
-	return "#{address_line1}, #{address_line2}\n#{city}, #{state}, #{zipcode}"
+	if address_line2
+	  return "#{address_line1}, #{address_line2}\n#{city}, #{state}, #{zipcode}"
+    else
+	  return "#{address_line1}\n#{city}, #{state}, #{zipcode}"
+    end
   end
 
   # build IDI Patient FHIR::Model

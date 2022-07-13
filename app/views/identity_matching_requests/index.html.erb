@@ -1,14 +1,14 @@
-<p style="color: green"><%= notice %></p>
+<h1 class="w-100 text-center">Identity Matching Requests</h1>
 
-<h1>Identity matching requests</h1>
-
-<div id="identity_matching_requests">
+<div class="row row-cols-md-3 g-2 align-items-around" id="identity_matching_requests">
   <% @identity_matching_requests.each do |identity_matching_request| %>
-    <%= render identity_matching_request %>
-    <p>
-      <%= link_to "Show this identity matching request", identity_matching_request %>
-    </p>
+	<div class="col">
+      <%= render identity_matching_request %>
+      <div class="d-flex px-2">
+        <%= link_to "Show More", identity_matching_request, class: "btn btn-success" %>
+      </div>
+	</div>
   <% end %>
 </div>
 
-<%= link_to "New identity matching request", new_identity_matching_request_path %>
+<%= link_to "New identity matching request", new_identity_matching_request_path, class: "btn btn-lg btn-primary mt-2 mr-4" %>
