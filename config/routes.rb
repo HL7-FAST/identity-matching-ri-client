@@ -7,5 +7,6 @@ Rails.application.routes.draw do
   root 'welcome#index'
 
   get 'welcome/index'
+  post 'patient_servers', {controller: :patient_server, action: :create}
 
 end

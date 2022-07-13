@@ -1,0 +1,2 @@
+module PatientServerHelper
+end
