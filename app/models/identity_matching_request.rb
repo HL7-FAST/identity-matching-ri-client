@@ -7,9 +7,9 @@ class IdentityMatchingRequest < ApplicationRecord
   # return pretty string for address
   def address
 	if address_line2
-	  return "#{address_line1}, #{address_line2}\n#{city}, #{state}, #{zipcode}"
+	  return "#{address_line1}, #{address_line2},\n#{city}, #{state}, #{zipcode}"
     else
-	  return "#{address_line1}\n#{city}, #{state}, #{zipcode}"
+	  return "#{address_line1},\n#{city}, #{state}, #{zipcode}"
     end
   end
 
