@@ -12,8 +12,10 @@ Identity Matching Reference Implementation client web app as required by the HL7
 ## Quickstart
 From in repo,
 ```
+yarn install
 bundle install
 rails db:migrate
+rails assets:precompile
 ./bin/dev
 ```
 
