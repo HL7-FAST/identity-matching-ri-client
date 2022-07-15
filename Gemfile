@@ -75,5 +75,6 @@ end
 gem "fhir_models", "~> 4.2.1"
 #gem "fhir_client"
 
-# Use rest-client as http client
-gem "rest-client"
+# Use Faraday as http client
+gem "faraday"
+

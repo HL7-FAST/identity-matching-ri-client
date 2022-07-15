@@ -5,24 +5,11 @@ class IdentityMatchingRequest < ApplicationRecord
   serialize :response_json, JSON
 
   # Load fhir payload as JSON ERB template
-  MATCH_PARAMETER_ERB = ERB.new(File.read( Rails.root.join('resources', 'match_parameter.json.erb') ))
+  MATCH_PARAMETER_ERB = ERB.new(File.read(Rails.root.join('resources', 'match_parameter.json.erb')))
 
   # return pretty string for address
   def address
 	return "#{address_line1} #{address_line2}\n#{city} #{state} #{zipcode}"
-  end
-
-  # class method - construct <base_url>/Patient/$match
-  # params:
-  # 	base_url: string
-  # returns:
-  #     endpoint url: string
-  def self.endpoint(base_url)
-	if base_url.ends_with? '/'
-	  return base_url + 'Patient/$match'
-	else
-	  return base_url + '/Patient/$match'
-	end
   end
 
   # build IDI Patient FHIR::Model
@@ -48,22 +35,31 @@ class IdentityMatchingRequest < ApplicationRecord
   def save_and_send(url)
 	return false unless self.save
 
+	conn = Faraday.new(url: url, headers: {'Content-Type' => 'application/fhir+json'}) do |faraday|
+	  faraday.response :logger, nil, { bodies: true, log_level: :debug }
+  	  faraday.response :raise_error
+	end
+
 	payload = request_fhir.to_json
-    puts "POST ", url
+    print "POST ", url
 	puts "=== payload ===\n#{payload}==========\n"
+
 	begin
-	  response = RestClient.post(url, payload, {accept: 'application/fhir+json', content_length: payload.length});
+	  response = conn.post do |req| req.body = payload end
 	  puts "=== response ===\n#{response}\n==========\n"
-	  self.response_status = response.code
+
+	  self.response_status = response.env.status
 	  self.response_json = FHIR.from_contents(response.body).to_hash # str -> fhir -> hash
 	  return self.save!
-	rescue RestClient::ExceptionWithResponse => exception
+
+	rescue Faraday::Error => exception
 	  puts "ExceptionWithResponse"
 	  response = exception.response
 	  puts "=== response ===\n#{response}\n==========\n"
 	  self.response_status = response.code
 	  self.response_json = JSON.parse(response.body)
 	  return self.save!
+
 	rescue Exception => exception
 	  puts "=== Exception ===\n#{exception}\n========\n"
 	  return false
