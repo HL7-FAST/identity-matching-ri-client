@@ -56,15 +56,33 @@ class IdentityMatchingRequest < ApplicationRecord
 	return "#{address_line1} #{address_line2}\n#{city} #{state} #{zipcode}"
   end
 
+  # class method - construct <base_url>/Patient/$match
+  # params:
+  # 	base_url: string
+  # returns:
+  #     endpoint url: string
+  def self.endpoint(base_url)
+	if base_url.ends_with? '/'
+	  return base_url + 'Patient/$match'
+	else
+	  return base_url + '/Patient/$match'
+	end
+  end
+
+  # instance alias of class method above
+  def endpoint(base_url)
+	self.endpoint(base_url)
+  end
+
   # build IDI Patient FHIR::Model
   # returns:
   # 	FHIR::Model instance of IDIPatient profile
   def request_fhir
 	idi_patient_json = IdentityMatchingRequest::MATCH_PARAMETER % {id: self.id, name: self.full_name}
 
-	puts "==="
-	puts idi_patient_json
-	puts "==="
+	#puts "==="
+	#puts idi_patient_json
+	#puts "==="
 
 	return FHIR.from_contents( idi_patient_json )
   end
@@ -73,12 +91,29 @@ class IdentityMatchingRequest < ApplicationRecord
   # params:
   # 	base_url: string (in proper URL format)
   # returns:
-  # 	response_status: integer
-  # throws:
-  #     RestClient::ExceptionWithResponse
-  def execute!(base_url)
-	payload = request_fhir
-	response = RestClient.post(File.join(base_url, "Patient/$match"), request_fhir, {accept: :json, content_length: payload.length});
+  # 	response status: integer, 200 for success, anything else for failure
+  def send(base_url)
+	payload = request_fhir.to_json
+	puts "=== payload ===\n#{payload}==========\n"
+	begin
+      puts "endpoint: ", endpoint(base_url)
+	  response = RestClient.post( endpoint(base_url), request_fhir, {accept: :json, content_length: payload.length});
+	  puts "=== response ===#{response}==========\n"
+	  self.response_status = response.code
+	  # run through fhir parser to check, and then rails auto-serializes hash to json:
+	  self.response_json = FHIR.from_contents(response.body).to_hash
+	rescue RestClient::ExceptionWithResponse => exception
+	  puts "ExceptionWithResponse"
+	  response = exception.response
+	  self.response_status = response.code
+	  self.response_json = JSON.parse(response.body)
+	rescue Exception => exception
+	  puts exception
+	  #flash[:alert] = "Error: #{exception}"
+	ensure
+	  self.save
+	  return self.response_status || -1
+	end
   end
 
   # parse response body into FHIR::Model

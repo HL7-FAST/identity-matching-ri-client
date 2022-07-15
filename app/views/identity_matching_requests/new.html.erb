@@ -1,7 +1,7 @@
 <h1>New identity matching request</h1>
 
 <p class="lead">
-  Will execute <code><%= session[:base] %>/Patient/$match</code>
+  Will execute <code><%= IdentityMatchingRequest.endpoint(session[:base]) %></code>
   <%= link_to "Change Server", root_url, class: "btn btn-sm btn-secondary ms-3" %>
 </p>
 
