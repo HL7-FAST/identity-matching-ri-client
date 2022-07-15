@@ -30,7 +30,7 @@ class IdentityMatchingRequest < ApplicationRecord
   # 	FHIR::Model instance of IDIPatient profile
   def request_fhir
 	erb_params = {} # TODO
-	idi_patient_json = IdentityMatchingRequest::MATCH_PARAMETER_ERB.result(erb_params)
+	idi_patient_json = IdentityMatchingRequest::MATCH_PARAMETER_ERB.result_with_hash(erb_params)
 
 	#puts "==="
 	#puts idi_patient_json
