@@ -4,52 +4,8 @@ class IdentityMatchingRequest < ApplicationRecord
 
   serialize :response_json, JSON
 
-
-  MATCH_PARAMETER = <<~EOS
-	{
-	  "resourceType": "Parameters",
-	  "id": "%{id}",
-	  "parameter": [
-	    {
-	      "name": "resource",
-	      "resource": {
-	        "resourceType": "Patient",
-	        "identifier": [
-	          {
-	            "use": "usual",
-	            "type": {
-	              "coding": [
-	                {
-	                  "system": "http://hl7.org/fhir/v2/0203",
-	                  "code": "MR"
-	                }
-	              ]
-	            },
-	            "system": "urn:oid:1.2.36.146.595.217.0.1",
-	            "value": "12345"
-	          }
-	        ],
-	        "name": [
-	          {
-				"text": "%{name}"
-	          }
-	        ],
-	        "gender": "male",
-	        "birthDate": "1974-12-25"
-	      }
-	    },
-	    {
-	      "name": "count",
-	      "valueInteger": "3"
-	    },
-	    {
-	      "name": "onlyCertainMatches",
-	      "valueBoolean": "false"
-	    }
-	  ]
-	}
-  EOS
-
+  # Load fhir payload as JSON ERB template
+  MATCH_PARAMETER_ERB = ERB.new(File.read( Rails.root.join('resources', 'match_parameter.json.erb') ))
 
   # return pretty string for address
   def address
@@ -73,7 +29,8 @@ class IdentityMatchingRequest < ApplicationRecord
   # returns:
   # 	FHIR::Model instance of IDIPatient profile
   def request_fhir
-	idi_patient_json = IdentityMatchingRequest::MATCH_PARAMETER % {id: self.id, name: self.full_name}
+	erb_params = {} # TODO
+	idi_patient_json = IdentityMatchingRequest::MATCH_PARAMETER_ERB.result(erb_params)
 
 	#puts "==="
 	#puts idi_patient_json
