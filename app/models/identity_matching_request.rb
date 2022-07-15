@@ -69,11 +69,6 @@ class IdentityMatchingRequest < ApplicationRecord
 	end
   end
 
-  # instance alias of class method above
-  def endpoint(base_url)
-	self.endpoint(base_url)
-  end
-
   # build IDI Patient FHIR::Model
   # returns:
   # 	FHIR::Model instance of IDIPatient profile
@@ -87,17 +82,17 @@ class IdentityMatchingRequest < ApplicationRecord
 	return FHIR.from_contents( idi_patient_json )
   end
 
-  # connect to a url and save response
+  # save request data and attempt to query endpoint for response
   # params:
   # 	base_url: string (in proper URL format)
   # returns:
   # 	response status: integer, 200 for success, anything else for failure
-  def send(base_url)
+  def send(url)
 	payload = request_fhir.to_json
 	puts "=== payload ===\n#{payload}==========\n"
 	begin
       puts "endpoint: ", endpoint(base_url)
-	  response = RestClient.post( endpoint(base_url), request_fhir, {accept: :json, content_length: payload.length});
+	  response = RestClient.post(url, payload, {accept: :json, content_length: payload.length});
 	  puts "=== response ===#{response}==========\n"
 	  self.response_status = response.code
 	  # run through fhir parser to check, and then rails auto-serializes hash to json:

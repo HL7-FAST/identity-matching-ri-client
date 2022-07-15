@@ -1,4 +1,5 @@
 class IdentityMatchingRequestsController < ApplicationController
+  before_action :set_patient_server
   before_action :set_identity_matching_request, only: %i[ show edit update destroy ]
 
   # GET /identity_matching_requests or /identity_matching_requests.json
@@ -76,4 +77,11 @@ class IdentityMatchingRequestsController < ApplicationController
     def identity_matching_request_params
       params.require(:identity_matching_request).permit(:full_name, :date_of_birth, :address_line1, :address_line2, :city, :state, :zipcode, :email, :mobile, :response_status, :response_json)
     end
+
+	# set @patient_server or redirect to root
+    def set_patient_server
+	  @patient_server = session[:patient_server]
+      @patient_server ||= PatientServer.last
+	  redirect_to(root_url, {alert: "Please set a server to query."}) and return unless @patient_server
+	end
 end
