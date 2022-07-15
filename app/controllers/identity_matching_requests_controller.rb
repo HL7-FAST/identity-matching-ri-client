@@ -25,7 +25,7 @@ class IdentityMatchingRequestsController < ApplicationController
     @identity_matching_request = IdentityMatchingRequest.new(identity_matching_request_params)
     respond_to do |format|
       if @identity_matching_request.save_and_send(@patient_server.endpoint)
-		if @identity_matching_request.response_status == 200
+		if @identity_matching_request.response_status >= 200 && @identity_matching_request.response_status < 400
           format.html { redirect_to identity_matching_request_url(@identity_matching_request), notice: "Patient matches found!" }
 		else
           format.html { redirect_to identity_matching_request_url(@identity_matching_request), notice: "Identity match attempted, no patient found." }
