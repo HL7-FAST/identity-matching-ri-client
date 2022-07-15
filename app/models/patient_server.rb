@@ -2,6 +2,7 @@ class PatientServer < ApplicationRecord
 
   # Loose URI Regex adapted from https://www.rfc-editor.org/rfc/rfc2396#appendix-B
   validates :base, format: { with: /\A(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?\z/ }
+  validates :base, presence: true
 
   # class method - construct <base_url>/Patient/$match
   # params:
@@ -18,6 +19,6 @@ class PatientServer < ApplicationRecord
 
   # getter for endpoint, built from base_url
   def endpoint
-	return self.endpoint( self.base )
+	return self.class.endpoint( self.base )
   end
 end

@@ -86,28 +86,30 @@ class IdentityMatchingRequest < ApplicationRecord
   # params:
   # 	base_url: string (in proper URL format)
   # returns:
-  # 	response status: integer, 200 for success, anything else for failure
-  def send(url)
+  # 	true if object saved and response received (regardless of match) OR
+  #     false otherwise
+  def save_and_send(url)
+	return false unless self.save
+
 	payload = request_fhir.to_json
+    puts "POST ", url
 	puts "=== payload ===\n#{payload}==========\n"
 	begin
-      puts "endpoint: ", endpoint(base_url)
-	  response = RestClient.post(url, payload, {accept: :json, content_length: payload.length});
-	  puts "=== response ===#{response}==========\n"
+	  response = RestClient.post(url, payload, {accept: 'application/fhir+json', content_length: payload.length});
+	  puts "=== response ===\n#{response}\n==========\n"
 	  self.response_status = response.code
-	  # run through fhir parser to check, and then rails auto-serializes hash to json:
-	  self.response_json = FHIR.from_contents(response.body).to_hash
+	  self.response_json = FHIR.from_contents(response.body).to_hash # str -> fhir -> hash
+	  return self.save!
 	rescue RestClient::ExceptionWithResponse => exception
 	  puts "ExceptionWithResponse"
 	  response = exception.response
+	  puts "=== response ===\n#{response}\n==========\n"
 	  self.response_status = response.code
 	  self.response_json = JSON.parse(response.body)
+	  return self.save!
 	rescue Exception => exception
-	  puts exception
-	  #flash[:alert] = "Error: #{exception}"
-	ensure
-	  self.save
-	  return self.response_status || -1
+	  puts "=== Exception ===\n#{exception}\n========\n"
+	  return false
 	end
   end
 

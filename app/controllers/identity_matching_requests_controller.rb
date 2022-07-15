@@ -23,21 +23,16 @@ class IdentityMatchingRequestsController < ApplicationController
   # POST /identity_matching_requests or /identity_matching_requests.json
   def create
     @identity_matching_request = IdentityMatchingRequest.new(identity_matching_request_params)
-	puts "Made new object"
     respond_to do |format|
-      if @identity_matching_request.save
-		puts "Saved object"
-		if @identity_matching_request.send(session[:base]) == 200
-		  puts "Sent request, got OK"
-          format.html { redirect_to identity_matching_request_url(@identity_matching_request), notice: "Patient match found!" }
+      if @identity_matching_request.save_and_send(@patient_server.endpoint)
+		if @identity_matching_request.response_status == 200
+          format.html { redirect_to identity_matching_request_url(@identity_matching_request), notice: "Patient matches found!" }
 		else
-		  puts "Sent request, got 4xx"
           format.html { redirect_to identity_matching_request_url(@identity_matching_request), notice: "Identity match attempted, no patient found." }
-          #format.json { render :show, status: :created, location: @identity_matching_request }
 		end
+        #format.json { render :show, status: :created, location: @identity_matching_request }
       else
-		puts "Failed to save object"
-		flash.now.alert = "Invalid input, please double check."
+		flash.now.alert = "There was an error, please check below."
         format.html { render :new, status: :unprocessable_entity }
         #format.json { render json: @identity_matching_request.errors, status: :unprocessable_entity }
       end
@@ -78,9 +73,9 @@ class IdentityMatchingRequestsController < ApplicationController
       params.require(:identity_matching_request).permit(:full_name, :date_of_birth, :address_line1, :address_line2, :city, :state, :zipcode, :email, :mobile, :response_status, :response_json)
     end
 
-	# set @patient_server or redirect to root
+	# set @patient_server by session or by history or redirect to root
     def set_patient_server
-	  @patient_server = session[:patient_server]
+	  @patient_server = PatientServer.find(session[:patient_server_id]) if session[:patient_server_id]
       @patient_server ||= PatientServer.last
 	  redirect_to(root_url, {alert: "Please set a server to query."}) and return unless @patient_server
 	end
