@@ -22,13 +22,18 @@
 !/tmp/pids/
 !/tmp/pids/.keep
 
-
+# Assume all assets are compiled, and ignore them
 /public/assets
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
+# Ignore compiled assets
 /app/assets/builds/*
 !/app/assets/builds/.keep
 
+# Ignore Node packages
 /node_modules
+
+# Mac Stuff
+.DS_Store

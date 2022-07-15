@@ -1,2 +1,11 @@
 @import 'bootstrap/scss/bootstrap';
 @import 'bootstrap-icons/font/bootstrap-icons';
+
+code {
+  font-family: Consolas,"courier new";
+  color: crimson;
+  background-color: #f6f6f6;
+  padding: 2px;
+  font-size: 105%;
+  white-space: pre-line;
+}

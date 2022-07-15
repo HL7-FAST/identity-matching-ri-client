@@ -1,14 +1,14 @@
-<h1 class="w-100 text-center">Identity Matching Reference Implementation</h1>
+<h1 class="w-100 text-center">Identity Matching RI Client</h1>
 
-<p class="lead">This is a client RI conforming to <a href="https://build.fhir.org/ig/HL7/fhir-identity-matching-ig/index.html">FHIR Identity Matching IG.</a></p>
+<p class="lead">This is a client reference implementation conforming to the <a href="https://build.fhir.org/ig/HL7/fhir-identity-matching-ig/index.html">FHIR Identity Matching IG</a> by the FHIR at Scale Taskforce (FAST).</p>
 
 <p class="lead">Please enter a conforming server implementation to continue:</p>
 
-<%= form_for :patient_server, url: "/patient_servers", class: "row row-cols-md-auto g-3 align-items-center" do |f| %>
-	<div class="col">
-		<%= f.text_field :base, placeholder: "Enter Base URL. Ex: http://myserver.com/fhir/", class: "form-control", required: true %>
+<%= form_for :patient_server, url: "/patient_servers", class: "row row-cols-md-auto g-3 justify-content-center" do |f| %>
+	<div class="col-auto">
+		<%= f.text_field :base, placeholder: "Enter Base URL. Ex: http://myserver.com/fhir/", class: "form-control", size: 64, required: true %>
 	</div>
-	<div>
+	<div class="col-auto">
 		<%= f.submit "Continue", class: "btn btn-primary" %>
 	</div>
 <% end %>

@@ -1,11 +1,14 @@
 <h1>New identity matching request</h1>
 
-<p class="lead">Executing <code>$match</code> operation at <a href="<%= session[:base] %>"><%= session[:base] %></a></p>
+<p class="lead">
+  Will execute <code><%= session[:base] %>/Patient/$match</code>
+  <%= link_to "Change Server", root_url, class: "btn btn-sm btn-secondary ms-3" %>
+</p>
 
 <%= render "form", identity_matching_request: @identity_matching_request %>
 
 <br>
 
 <div>
-  <%= link_to "Back to identity matching requests", identity_matching_requests_path %>
+  <%= link_to "See previous identity matches", identity_matching_requests_path %>
 </div>

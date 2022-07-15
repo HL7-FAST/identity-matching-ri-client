@@ -2,15 +2,11 @@ class IdentityMatchingRequest < ApplicationRecord
 
   # TODO: add validations
 
-  serialize :response_body, JSON
+  serialize :response_json, JSON
 
   # return pretty string for address
   def address
-	if address_line2
-	  return "#{address_line1}, #{address_line2},\n#{city}, #{state}, #{zipcode}"
-    else
-	  return "#{address_line1},\n#{city}, #{state}, #{zipcode}"
-    end
+	return "#{address_line1} #{address_line2}\n#{city} #{state} #{zipcode}"
   end
 
   # build IDI Patient FHIR::Model
@@ -39,8 +35,8 @@ class IdentityMatchingRequest < ApplicationRecord
   # 	FHIR::Model instance OR
   #     nil (no response body)
   def response_fhir
-	return nil unless response_body
-	FHIR.from_contents(response_body)
+	return nil unless response_json
+	FHIR.from_contents(response_json)
   end
 
 end
