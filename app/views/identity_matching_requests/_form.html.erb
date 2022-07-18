@@ -1,7 +1,7 @@
 <%= form_with(model: identity_matching_request) do |form| %>
   <% if identity_matching_request.errors.any? %>
     <div class="alert alert-danger">
-      <h2><%= pluralize(identity_matching_request.errors.count, "error") %> prohibited this identity_matching_request from being saved:</h2>
+      <h2><%= pluralize(identity_matching_request.errors.count, "error") %> occurred:</h2>
 
       <ul>
         <% identity_matching_request.errors.each do |error| %>

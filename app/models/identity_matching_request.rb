@@ -20,7 +20,7 @@ class IdentityMatchingRequest < ApplicationRecord
   def to_fhir
 	erb_params = {last_name: nil, given_names: nil, date_of_birth: nil, line1: nil, line2: nil, city: nil, state: nil, zipcode: nil, email: nil, mobile: nil}
 
-	print "===\n", erb_params, "\n====\n"
+	#print "===\n", erb_params, "\n====\n"
 
 	# parse name
 	if self.full_name
@@ -50,9 +50,9 @@ class IdentityMatchingRequest < ApplicationRecord
 
 	idi_patient_json = IdentityMatchingRequest::MATCH_PARAMETER_ERB.result_with_hash(erb_params)
 
-	puts "==="
-	puts idi_patient_json
-	puts "==="
+	#puts "==="
+	#puts idi_patient_json
+	#puts "==="
 
 	return FHIR.from_contents( idi_patient_json )
   end
@@ -72,27 +72,32 @@ class IdentityMatchingRequest < ApplicationRecord
 	end
 
 	payload = self.to_fhir.to_json
-    print "POST ", url
-	puts "=== payload ===\n#{payload}==========\n"
+    #print "POST ", url
+	#puts "=== payload ===\n#{payload}==========\n"
 
 	begin
 	  response = conn.post do |req| req.body = payload end
-	  puts "=== response ===\n#{response}\n==========\n"
+	  puts "=== Faraday Response ===\n#{response}\n==========\n" if response
 
 	  self.response_status = response.status
 	  self.response_json = FHIR.from_contents(response.body).to_hash # str -> fhir -> hash
-	  return self.save!
+	  return self.save
 
-	rescue Faraday::Error => exception
-	  puts "ExceptionWithResponse"
+	#rescue Faraday::NilStatusError => exception
+	#  puts "=== Faraday Null Error ==="
+	#  return false
+
+	rescue Faraday::ClientError => exception
 	  response = exception.response
-	  puts "=== response ===\n#{response}\n==========\n"
-	  self.response_status = response.status
-	  self.response_json = JSON.parse(response.body)
-	  return self.save!
+	  puts "=== Faraday Client Error ===\n#{response}\n==========\n"
+	  self.response_status = response[:status]
+	  self.response_json = JSON.parse(response[:body])
+	  self.errors.add(:response_status, exception.to_s);
+	  return self.save
 
 	rescue Exception => exception
 	  puts "=== Exception ===\n#{exception}\n========\n"
+	  self.errors.add(:response_status, exception.to_s);
 	  return false
 	end
   end
