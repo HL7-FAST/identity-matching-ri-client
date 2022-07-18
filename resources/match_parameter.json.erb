@@ -20,8 +20,9 @@
           ]
         },
 
-		<% if drivers_license %>
+		<% if drivers_license || nipi %>
         "identifier": [
+		  <% if drivers_license %>
           {
             "type": {
               "coding": [
@@ -35,8 +36,11 @@
             },
             "value": "<%= drivers_license %>"
           }
-		  <% if true %>
+		  <% end %>
+		  <% if drivers_license && nipi %>
 		  ,
+		  <% end %>
+		  <% if nipi %>
           {
             "type": {
               "coding": [
@@ -48,7 +52,7 @@
               ],
               "text": "National Insurance Payor Identifier"
             },
-            "value": "9800010077"
+            "value": "<%= nipi %>"
           }
 		  <% end %>
         ],
@@ -136,7 +140,7 @@
           }
         ],
 		<% end %>
-
+		"gender": "<%= gender %>",
         "birthDate": "<%= date_of_birth %>"
       }
     },

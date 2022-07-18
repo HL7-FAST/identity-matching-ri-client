@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_18_170320) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_18_173334) do
   create_table "identity_matching_requests", force: :cascade do |t|
     t.string "full_name"
     t.date "date_of_birth"
@@ -27,6 +27,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_18_170320) do
     t.datetime "updated_at", null: false
     t.string "drivers_license"
     t.string "gender"
+    t.string "national_insurance_payer_identifier"
   end
 
   create_table "patient_servers", force: :cascade do |t|

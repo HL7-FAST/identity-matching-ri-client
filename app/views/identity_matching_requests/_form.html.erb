@@ -18,6 +18,10 @@
 	  </div>
 
 	  <div class="col">
+	    <%= form.text_field :gender, class: "form-control", placeholder: "Gender" %>
+	  </div>
+
+	  <div class="col">
 		<div class="container-fluid">
 		  <div class="row">
 			<div class="col-md-3 col-4 text-center align-middle">
@@ -84,6 +88,9 @@
 	<div class="row mb-2">
 	  <div class="col-6">
 		<%= form.text_field :drivers_license, class: "form-control", placeholder: "Driver's License" %>
+	  </div>
+	  <div class="col-6">
+		<%= form.text_field :national_insurance_payer_identifier, class: "form-control", placeholder: "National Insurance Payer Identifier" %>
 	  </div>
 	</div>
 

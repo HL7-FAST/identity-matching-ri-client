@@ -86,7 +86,7 @@ class IdentityMatchingRequestsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def identity_matching_request_params
-      params.require(:identity_matching_request).permit(:full_name, :date_of_birth, :address_line1, :address_line2, :city, :state, :zipcode, :email, :mobile, :drivers_license, :gender)
+      params.require(:identity_matching_request).permit(:full_name, :date_of_birth, :address_line1, :address_line2, :city, :state, :zipcode, :email, :mobile, :drivers_license, :gender, :national_insurance_payer_identifier)
     end
 
 	# set @patient_server by session or by history or redirect to root
