@@ -3,8 +3,8 @@ class PatientServerController < ApplicationController
   # POST /patient_servers
   def create
 	@patient_server = PatientServer.find_or_create_by!(patient_server_params)
-	session[:base] = @patient_server.base
-	redirect_to new_identity_matching_request_path, notice: "Patient server set to #{session[:base]}."
+	session[:patient_server_id] = @patient_server.id
+	redirect_to new_identity_matching_request_path, notice: "Patient server set to #{@patient_server.base}."
   end
 
   private

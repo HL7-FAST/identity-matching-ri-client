@@ -1,4 +1,5 @@
 class IdentityMatchingRequestsController < ApplicationController
+  before_action :set_patient_server
   before_action :set_identity_matching_request, only: %i[ show edit update destroy ]
 
   # GET /identity_matching_requests or /identity_matching_requests.json
@@ -22,14 +23,18 @@ class IdentityMatchingRequestsController < ApplicationController
   # POST /identity_matching_requests or /identity_matching_requests.json
   def create
     @identity_matching_request = IdentityMatchingRequest.new(identity_matching_request_params)
-
     respond_to do |format|
-      if @identity_matching_request.save
-        format.html { redirect_to identity_matching_request_url(@identity_matching_request), notice: "Identity matching request was successfully created." }
-        format.json { render :show, status: :created, location: @identity_matching_request }
+      if @identity_matching_request.save_and_send(@patient_server.endpoint)
+		if @identity_matching_request.response_status >= 200 && @identity_matching_request.response_status < 400
+          format.html { redirect_to identity_matching_request_url(@identity_matching_request), notice: "Patient matches found!" }
+		else
+          format.html { redirect_to identity_matching_request_url(@identity_matching_request), notice: "Identity match attempted, no patient found." }
+		end
+        #format.json { render :show, status: :created, location: @identity_matching_request }
       else
+		flash.now.alert = "There was an error, please check below."
         format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @identity_matching_request.errors, status: :unprocessable_entity }
+        #format.json { render json: @identity_matching_request.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -57,6 +62,22 @@ class IdentityMatchingRequestsController < ApplicationController
     end
   end
 
+  # GET /identity_matching_requests/example
+  def example
+	@payload = File.read(Rails.root.join('resources', 'example_match_parameter.json'));
+	conn = Faraday.new(url: @patient_server.endpoint, headers: {'Content-Type' => 'application/fhir+json'}) do |faraday|
+	  faraday.response :logger, nil, {bodies: true, log_level: :debug}
+	  faraday.response :raise_error
+	end
+	begin
+		@response = conn.post do |req| req.body = @payload end
+		flash.now.notice = 'Identity matching success'
+	rescue Exception => exception
+		flash.now.alert = "Failed to query #{@paient_server.endpoint}"
+		@response = exception.to_s
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_identity_matching_request
@@ -65,6 +86,13 @@ class IdentityMatchingRequestsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def identity_matching_request_params
-      params.require(:identity_matching_request).permit(:full_name, :date_of_birth, :address_line1, :address_line2, :city, :state, :zipcode, :email, :mobile, :response_status, :response_json)
+      params.require(:identity_matching_request).permit(:full_name, :date_of_birth, :address_line1, :address_line2, :city, :state, :zipcode, :email, :mobile, :drivers_license, :gender, :national_insurance_payer_identifier)
     end
+
+	# set @patient_server by session or by history or redirect to root
+    def set_patient_server
+	  @patient_server = PatientServer.find(session[:patient_server_id]) if session[:patient_server_id]
+      @patient_server ||= PatientServer.last
+	  redirect_to(root_url, {alert: "Please set a server to query."}) and return unless @patient_server
+	end
 end

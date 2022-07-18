@@ -1,5 +1,15 @@
 <h1 class="w-100 text-center">Patient Identity Matches</h1>
 
+<div class="row justify-content-between my-3">
+  <div class="col-md-4 col-6 text-center">
+	<%= link_to "Change Server", root_path, class: "btn btn-secondary" %>
+  </div>
+  <div class="col-md-4 col-6 text-center">
+	<%= link_to "New identity matching request", new_identity_matching_request_path, class: "btn btn-primary" %>
+  </div>
+</div>
+
+
 <div class="row row-cols-md-3 g-2 align-items-around" id="identity_matching_requests">
   <% @identity_matching_requests.each do |identity_matching_request| %>
 	<div class="col">
@@ -11,4 +21,3 @@
   <% end %>
 </div>
 
-<%= link_to "New identity matching request", new_identity_matching_request_path, class: "btn btn-lg btn-primary mt-2 mr-4" %>

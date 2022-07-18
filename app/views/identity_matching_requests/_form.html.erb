@@ -1,7 +1,7 @@
 <%= form_with(model: identity_matching_request) do |form| %>
   <% if identity_matching_request.errors.any? %>
     <div class="alert alert-danger">
-      <h2><%= pluralize(identity_matching_request.errors.count, "error") %> prohibited this identity_matching_request from being saved:</h2>
+      <h2><%= pluralize(identity_matching_request.errors.count, "error") %> occurred:</h2>
 
       <ul>
         <% identity_matching_request.errors.each do |error| %>
@@ -15,6 +15,10 @@
 	<div class="row mb-2">
 	  <div class="col">
 	    <%= form.text_field :full_name, class: "form-control", placeholder: "Full Name" %>
+	  </div>
+
+	  <div class="col">
+	    <%= form.text_field :gender, class: "form-control", placeholder: "Gender" %>
 	  </div>
 
 	  <div class="col">
@@ -70,6 +74,23 @@
 
 	  <div class="col">
 	    <%= form.telephone_field :mobile, class: "form-control", placeholder: "Phone Number" %>
+	  </div>
+	</div>
+
+    <hr />
+
+	<div class="row mb-2">
+	  <div class="col">
+		<strong>Identifiers</strong>
+	  </div>
+	</div>
+
+	<div class="row mb-2">
+	  <div class="col-6">
+		<%= form.text_field :drivers_license, class: "form-control", placeholder: "Driver's License" %>
+	  </div>
+	  <div class="col-6">
+		<%= form.text_field :national_insurance_payer_identifier, class: "form-control", placeholder: "National Insurance Payer Identifier" %>
 	  </div>
 	</div>
 
