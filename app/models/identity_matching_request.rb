@@ -1,6 +1,8 @@
 class IdentityMatchingRequest < ApplicationRecord
 
   # TODO: add validations
+  # validates :email, format: { with: /@/ }
+  # validates :mobile, format: { with: /[^\a]/ }
 
   serialize :response_json, JSON
 
@@ -15,13 +17,42 @@ class IdentityMatchingRequest < ApplicationRecord
   # build IDI Patient FHIR::Model
   # returns:
   # 	FHIR::Model instance of IDIPatient profile
-  def request_fhir
-	erb_params = {} # TODO
+  def to_fhir
+	erb_params = {last_name: nil, given_names: nil, date_of_birth: nil, line1: nil, line2: nil, city: nil, state: nil, zipcode: nil, email: nil, mobile: nil}
+
+	print "===\n", erb_params, "\n====\n"
+
+	# parse name
+	if self.full_name
+	  names = self.full_name.strip.titleize.split();
+	  erb_params[:last_name] = names[-1];
+	  if names.length > 1
+	    names.slice!(0, names.length - 1)
+	    erb_params[:given_names] = names;
+	  end
+	end
+
+	# parse date
+	if self.date_of_birth
+		erb_params[:date_of_birth] = self.date_of_birth.strftime('%Y-%m-%d');
+	end
+
+	# address
+	erb_params[:line1] = self.address_line1;
+	erb_params[:line2] = self.address_line2;
+	erb_params[:city] = self.city;
+	erb_params[:state] = self.state;
+	erb_params[:zipcode] = self.zipcode;
+
+	# email & phone number
+	erb_params[:email] = self.email.strip.downcase;
+	erb_params[:mobile] = self.mobile.strip;
+
 	idi_patient_json = IdentityMatchingRequest::MATCH_PARAMETER_ERB.result_with_hash(erb_params)
 
-	#puts "==="
-	#puts idi_patient_json
-	#puts "==="
+	puts "==="
+	puts idi_patient_json
+	puts "==="
 
 	return FHIR.from_contents( idi_patient_json )
   end
@@ -40,7 +71,7 @@ class IdentityMatchingRequest < ApplicationRecord
   	  faraday.response :raise_error
 	end
 
-	payload = request_fhir.to_json
+	payload = self.to_fhir.to_json
     print "POST ", url
 	puts "=== payload ===\n#{payload}==========\n"
 
@@ -48,7 +79,7 @@ class IdentityMatchingRequest < ApplicationRecord
 	  response = conn.post do |req| req.body = payload end
 	  puts "=== response ===\n#{response}\n==========\n"
 
-	  self.response_status = response.env.status
+	  self.response_status = response.status
 	  self.response_json = FHIR.from_contents(response.body).to_hash # str -> fhir -> hash
 	  return self.save!
 
@@ -56,7 +87,7 @@ class IdentityMatchingRequest < ApplicationRecord
 	  puts "ExceptionWithResponse"
 	  response = exception.response
 	  puts "=== response ===\n#{response}\n==========\n"
-	  self.response_status = response.code
+	  self.response_status = response.status
 	  self.response_json = JSON.parse(response.body)
 	  return self.save!
 
