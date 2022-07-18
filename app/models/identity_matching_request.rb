@@ -21,7 +21,7 @@ class IdentityMatchingRequest < ApplicationRecord
   # returns:
   # 	FHIR::Model instance of IDIPatient profile
   def to_fhir
-	erb_params = {last_name: nil, given_names: nil, date_of_birth: nil, line1: nil, line2: nil, city: nil, state: nil, zipcode: nil, email: nil, mobile: nil}
+	erb_params = {last_name: nil, given_names: nil, date_of_birth: nil, line1: nil, line2: nil, city: nil, state: nil, zipcode: nil, email: nil, mobile: nil, drivers_license: nil, gender: nil}
 
 	#print "===\n", erb_params, "\n====\n"
 
@@ -52,6 +52,9 @@ class IdentityMatchingRequest < ApplicationRecord
 	# email & phone number
 	erb_params[:email] = self.email.strip.downcase;
 	erb_params[:mobile] = self.mobile.strip;
+
+	# identifiers
+	erb_params[:drivers_license] = self.drivers_license.strip
 
 	idi_patient_json = IdentityMatchingRequest::MATCH_PARAMETER_ERB.result_with_hash(erb_params)
 

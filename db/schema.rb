@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_13_185452) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_18_170320) do
   create_table "identity_matching_requests", force: :cascade do |t|
     t.string "full_name"
     t.date "date_of_birth"
@@ -25,6 +25,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_13_185452) do
     t.text "response_json"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "drivers_license"
+    t.string "gender"
   end
 
   create_table "patient_servers", force: :cascade do |t|

@@ -20,6 +20,40 @@
           ]
         },
 
+		<% if drivers_license %>
+        "identifier": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "DL",
+                  "display": "Drivers License"
+                }
+              ],
+              "text": "Drivers License"
+            },
+            "value": "<%= drivers_license %>"
+          }
+		  <% if false %>
+		  ,
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                  "code": "NIIP",
+                  "display": "National Insurance Payor Identifier"
+                }
+              ],
+              "text": "National Insurance Payor Identifier"
+            },
+            "value": "9800010077"
+          }
+		  <% end %>
+        ],
+		<% end %>
+
         <% if given_names && !given_names.empty? %>
         "name": [
           {
