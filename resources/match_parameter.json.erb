@@ -35,6 +35,21 @@
         ],
 		<% end %>
 
+		<% if mobile %>
+		"telecom": [ {
+			"system": "phone",
+			"value": "<%= mobile %>",
+			"use": "mobile"
+		} ],
+		<% end %>
+
+		<% if email %>
+		"telecom": [ {
+			"system": "email",
+			"value": "<%= email %>"
+		} ],
+		<% end %>
+
 		<% if line1 || city || state || zipcode %>
         "address": [
           {
