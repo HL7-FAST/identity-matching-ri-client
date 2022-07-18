@@ -27,7 +27,9 @@ class IdentityMatchingRequest < ApplicationRecord
 	  names = self.full_name.strip.titleize.split();
 	  erb_params[:last_name] = names[-1];
 	  if names.length > 1
-	    names.slice!(0, names.length - 1)
+	    #names.slice!(0, names.length - 1)
+	    #erb_params[:given_names] = names;
+		names.pop
 	    erb_params[:given_names] = names;
 	  end
 	end
@@ -83,20 +85,15 @@ class IdentityMatchingRequest < ApplicationRecord
 	  self.response_json = FHIR.from_contents(response.body).to_hash # str -> fhir -> hash
 	  return self.save
 
-	#rescue Faraday::NilStatusError => exception
-	#  puts "=== Faraday Null Error ==="
-	#  return false
-
 	rescue Faraday::ClientError => exception
-	  response = exception.response
-	  puts "=== Faraday Client Error ===\n#{response}\n==========\n"
-	  self.response_status = response[:status]
-	  self.response_json = JSON.parse(response[:body])
+	  #puts "=== Faraday Client Error ===\n#{exception.response}\n==========\n"
+	  self.response_status = exception.response[:status]
+	  self.response_json = JSON.parse(exception.response[:body])
 	  self.errors.add(:response_status, exception.to_s);
 	  return self.save
 
 	rescue Exception => exception
-	  puts "=== Exception ===\n#{exception}\n========\n"
+	  #puts "=== Exception ===\n#{exception}\n========\n"
 	  self.errors.add(:response_status, exception.to_s);
 	  return false
 	end
