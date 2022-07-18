@@ -43,7 +43,7 @@
 		} ],
 		<% end %>
 
-		<% if email %>
+		<% if email && !email.empty? %>
 		"telecom": [ {
 			"system": "email",
 			"value": "<%= email %>"
@@ -105,10 +105,13 @@
 
         "birthDate": "<%= date_of_birth %>"
       }
-    },
+    }
+	<% if false %>
+	,
     {
       "name": "onlyCertainMatches",
-      "valueBoolean": "false"
+      "valueBoolean": "true"
     }
+	<% end %>
   ]
 }
