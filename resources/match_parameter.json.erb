@@ -35,7 +35,7 @@
             },
             "value": "<%= drivers_license %>"
           }
-		  <% if false %>
+		  <% if true %>
 		  ,
           {
             "type": {
@@ -112,7 +112,7 @@
         ],
         <% end %>
 
-		<% if false %>
+		<% if true %>
         "contact": [
           {
             "relationship": [
@@ -136,16 +136,13 @@
           }
         ],
 		<% end %>
-
+		"gender": "male",
         "birthDate": "<%= date_of_birth %>"
       }
-    }
-	<% if false %>
-	,
+    },
     {
       "name": "onlyCertainMatches",
       "valueBoolean": "true"
     }
-	<% end %>
   ]
 }
