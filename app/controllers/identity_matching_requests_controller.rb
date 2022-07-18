@@ -62,6 +62,22 @@ class IdentityMatchingRequestsController < ApplicationController
     end
   end
 
+  # GET /identity_matching_requests/example
+  def example
+	@payload = File.read(Rails.root.join('resources', 'example_match_parameter.json'));
+	conn = Faraday.new(url: @patient_server.endpoint, headers: {'Content-Type' => 'application/fhir+json'}) do |faraday|
+	  faraday.response :logger, nil, {bodies: true, log_level: :debug}
+	  faraday.response :raise_error
+	end
+	begin
+		@response = conn.post do |req| req.body = @payload end
+		flash.now.notice = 'Identity matching success'
+	rescue Exception => exception
+		flash.now.alert = "Failed to query #{@paient_server.endpoint}"
+		@response = exception.to_s
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_identity_matching_request

@@ -1,5 +1,11 @@
 <%= render @identity_matching_request %>
 
+<h3>FHIR Request</h3>
+<pre><code><%= @identity_matching_request.to_fhir %></code></pre>
+
+<h3>FHIR Response</h3>
+<pre><code><%= @identity_matching_request.response_body %></code></pre>
+
 <div>
   <%= link_to "Edit this identity matching request", edit_identity_matching_request_path(@identity_matching_request) %> |
   <%= link_to "Back to identity matching requests", identity_matching_requests_path %>
