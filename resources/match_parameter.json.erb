@@ -20,14 +20,20 @@
           ]
         },
 
-        <% if last_name %>
+        <% if given_names && !given_names.empty? %>
         "name": [
           {
             "family": "<%= last_name %>",
             "given": <%= given_names %>
           }
         ],
-        <% end %>
+        <% else %>
+        "name": [
+          {
+            "family": "<%= last_name %>"
+          }
+        ],
+		<% end %>
 
 		<% if line1 || city || state || zipcode %>
         "address": [
@@ -57,7 +63,7 @@
         ],
         <% end %>
 
-        <%# TODO: remove? add email? replace phone number? %>
+		<% if false %>
         "contact": [
           {
             "relationship": [
@@ -79,13 +85,10 @@
               }
             ]
           }
-
-        <% if date_of_birth %>
         ],
+		<% end %>
+
         "birthDate": "<%= date_of_birth %>"
-        <% else %>
-        ]
-        <% end %>
       }
     },
     {

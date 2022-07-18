@@ -1,6 +1,9 @@
 class IdentityMatchingRequest < ApplicationRecord
 
   # TODO: add validations
+  validates :full_name, presence: true
+  validates :date_of_birth, presence: true
+
   # validates :email, format: { with: /@/ }
   # validates :mobile, format: { with: /[^\a]/ }
 
@@ -79,7 +82,7 @@ class IdentityMatchingRequest < ApplicationRecord
 
 	begin
 	  response = conn.post do |req| req.body = payload end
-	  puts "=== Faraday Response ===\n#{response}\n==========\n" if response
+	  #puts "=== Faraday Response ===\n#{response}\n==========\n" if response
 
 	  self.response_status = response.status
 	  self.response_json = FHIR.from_contents(response.body).to_hash # str -> fhir -> hash
