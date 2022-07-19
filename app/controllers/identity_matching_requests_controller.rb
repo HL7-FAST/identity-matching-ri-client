@@ -25,6 +25,7 @@ class IdentityMatchingRequestsController < ApplicationController
     @identity_matching_request = IdentityMatchingRequest.new(identity_matching_request_params)
     respond_to do |format|
       if @identity_matching_request.save_and_send(@patient_server.endpoint)
+		# TODO: identify a better criteria to distinguish between patient found and patient not found
 		if @identity_matching_request.response_status >= 200 && @identity_matching_request.response_status < 400
           format.html { redirect_to identity_matching_request_url(@identity_matching_request), notice: "Patient matches found!" }
 		else
@@ -42,12 +43,12 @@ class IdentityMatchingRequestsController < ApplicationController
   # PATCH/PUT /identity_matching_requests/1 or /identity_matching_requests/1.json
   def update
     respond_to do |format|
-      if @identity_matching_request.update(identity_matching_request_params)
+      if @identity_matching_request.update(identity_matching_request_params) && @identity_matching_request.save_and_send(@patient_server.endpoint)
         format.html { redirect_to identity_matching_request_url(@identity_matching_request), notice: "Identity matching request was successfully updated." }
-        format.json { render :show, status: :ok, location: @identity_matching_request }
+        #format.json { render :show, status: :ok, location: @identity_matching_request }
       else
         format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @identity_matching_request.errors, status: :unprocessable_entity }
+        #format.json { render json: @identity_matching_request.errors, status: :unprocessable_entity }
       end
     end
   end

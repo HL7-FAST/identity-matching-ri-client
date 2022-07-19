@@ -38,7 +38,9 @@ class IdentityMatchingRequest < ApplicationRecord
 	end
 
 	# gender
-	erb_params[:gender] = self.gender.strip.downcase
+	if self.gender
+		erb_params[:gender] = self.gender.strip.downcase
+	end
 
 	# parse date
 	if self.date_of_birth
