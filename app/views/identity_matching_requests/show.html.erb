@@ -1,3 +1,15 @@
+<div class="row mt-2 justify-content-between">
+  <div class="col">
+    <%= link_to "Edit and Re-Match", edit_identity_matching_request_path(@identity_matching_request) %> |
+    <%= link_to "All Identity Matches", identity_matching_requests_path %>
+  </div>
+  <div class="col text-end">
+    <%= link_to "Delete", @identity_matching_request, method: :delete, class: "btn btn-sm btn-dark d-inline" %>
+  </div>
+</div>
+
+<hr />
+
 <div class="row my-2 justify-content-center">
   <%= render @identity_matching_request do end %>
 </div>
@@ -16,10 +28,3 @@
   <h6>No valid response obtained from server</h6>
 <% end %>
 
-<hr />
-
-<div class="">
-  <%= link_to "Edit and Re-Match", edit_identity_matching_request_path(@identity_matching_request) %> |
-  <%= link_to "All Identity Matches", identity_matching_requests_path %> |
-  <%= link_to "Destroy this identity matching request", @identity_matching_request, method: :delete, class: "btn btn-sm btn-danger d-inline" %>
-</div>
