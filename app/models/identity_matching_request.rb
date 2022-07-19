@@ -94,7 +94,18 @@ class IdentityMatchingRequest < ApplicationRecord
 	  #puts "=== Faraday Response ===\n#{response}\n==========\n" if response
 
 	  self.response_status = response.status
-	  self.response_json = FHIR.from_contents(response.body).to_hash # str -> fhir -> hash
+	  fhir_data = FHIR.from_contents(response.body).to_hash
+	  
+	  # autofill address
+	  if fhir_data['entry'] && fhir_data['entry'][0]['address'] && fhir_data['entry'][0]['address'][0]
+		self.address_line1 = fhir_data.dig('entry', 0, 'address', 0, 'line', 0);
+		self.address_line2 = fhir_data.dig('entry', 0, 'address', 0, 'line', 1);
+		self.city = fhir_data.dig('entry', 0, 'address', 0, 'city');
+		self.state = fhir_data.dig('entry', 0, 'address', 0, 'state');
+		self.zipcode = fhir_data.dig('entry', 0, 'address', 0, 'postalCode');
+	  end
+
+	  self.response_json = fhir_data
 	  return self.save
 
 	rescue Faraday::ClientError => exception

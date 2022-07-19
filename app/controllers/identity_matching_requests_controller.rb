@@ -26,10 +26,10 @@ class IdentityMatchingRequestsController < ApplicationController
     respond_to do |format|
       if @identity_matching_request.save_and_send(@patient_server.endpoint)
 		# TODO: identify a better criteria to distinguish between patient found and patient not found
-		if @identity_matching_request.response_status >= 200 && @identity_matching_request.response_status < 400
+		if @identity_matching_request.response_json && @identity_matching_request.response_json.fetch('total', 0) > 0
           format.html { redirect_to identity_matching_request_url(@identity_matching_request), notice: "Patient matches found!" }
 		else
-          format.html { redirect_to identity_matching_request_url(@identity_matching_request), notice: "Identity match attempted, no patient found." }
+          format.html { redirect_to identity_matching_request_url(@identity_matching_request), notice: "Identity match attempted, no patients found." }
 		end
         #format.json { render :show, status: :created, location: @identity_matching_request }
       else
@@ -44,7 +44,11 @@ class IdentityMatchingRequestsController < ApplicationController
   def update
     respond_to do |format|
       if @identity_matching_request.update(identity_matching_request_params) && @identity_matching_request.save_and_send(@patient_server.endpoint)
-        format.html { redirect_to identity_matching_request_url(@identity_matching_request), notice: "Identity matching request was successfully updated." }
+		if @identity_matching_request.response_json && @identity_matching_request.response_json.fetch('total', 0) > 0
+          format.html { redirect_to identity_matching_request_url(@identity_matching_request), notice: "Identity matching request was successfully updated." }
+		else
+          format.html { redirect_to identity_matching_request_url(@identity_matching_request), notice: "Identity match updated, no patients found." }
+		end
         #format.json { render :show, status: :ok, location: @identity_matching_request }
       else
         format.html { render :edit, status: :unprocessable_entity }
@@ -58,7 +62,7 @@ class IdentityMatchingRequestsController < ApplicationController
     @identity_matching_request.destroy
 
     respond_to do |format|
-      format.html { redirect_to identity_matching_requests_url, notice: "Identity matching request was successfully destroyed." }
+      format.html { redirect_to identity_matching_requests_url, notice: "Patient identity record deleted." }
       format.json { head :no_content }
     end
   end

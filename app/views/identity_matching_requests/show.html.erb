@@ -4,7 +4,7 @@
     <%= link_to "All Identity Matches", identity_matching_requests_path %>
   </div>
   <div class="col text-end">
-    <%= link_to "Delete", @identity_matching_request, method: :delete, class: "btn btn-sm btn-dark d-inline" %>
+    <%= link_to "Delete", @identity_matching_request, data: {turbo_method: :delete}, class: "btn btn-sm btn-dark d-inline" %>
   </div>
 </div>
 
@@ -15,16 +15,26 @@
 </div>
 
 <h3>FHIR Request</h3>
-<code><%= @identity_matching_request.to_fhir.to_json %></code>
-
+<code class="fhir"><%= @identity_matching_request.to_fhir.to_json %></code>
 <hr />
 
 <h3>FHIR Response</h3>
 <% if @identity_matching_request.response_json %>
-  <code><%= @identity_matching_request.response_json %></code>
+  <code class="fhir"><%= @identity_matching_request.response_json.to_json %></code>
 <% elsif @identity_matching_request.errors.any? %>
   <%= render "errors", identity_matching_request: @identity_matching_request %>
 <% else %>
   <h6>No valid response obtained from server</h6>
 <% end %>
 
+<script>
+function formatFhir() {
+  const elements = document.querySelectorAll('.fhir');
+  console.log('prettifying fhir for', elements.length, 'elements.')
+  Array.from(elements).forEach((element) => {prettifyJson(element)});
+}
+
+document.addEventListener("load", formatFhir);
+document.addEventListener("turbo:load", formatFhir);
+document.addEventListener("ready turbo:load", formatFhir);
+</script>
