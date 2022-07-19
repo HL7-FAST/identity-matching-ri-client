@@ -55,12 +55,12 @@ class IdentityMatchingRequest < ApplicationRecord
 	erb_params[:zipcode] = self.zipcode;
 
 	# email & phone number
-	erb_params[:email] = self.email.strip.downcase;
-	erb_params[:mobile] = self.mobile.strip;
+	erb_params[:email] = self.email.strip.downcase if self.email
+	erb_params[:mobile] = self.mobile.strip if self.mobile
 
 	# identifiers
-	erb_params[:drivers_license] = self.drivers_license.strip
-	erb_params[:nipi] = self.national_insurance_payer_identifier.strip
+	erb_params[:drivers_license] = self.drivers_license.strip if self.drivers_license
+	erb_params[:nipi] = self.national_insurance_payer_identifier.strip if self.national_insurance_payer_identifier
 
 	idi_patient_json = IdentityMatchingRequest::MATCH_PARAMETER_ERB.result_with_hash(erb_params)
 
