@@ -13,10 +13,12 @@
 <div class="row row-cols-md-3 g-2 align-items-around" id="identity_matching_requests">
   <% @identity_matching_requests.each do |identity_matching_request| %>
 	<div class="col">
-      <%= render identity_matching_request %>
-      <div class="d-flex px-2">
-        <%= link_to "Show More", identity_matching_request, class: "btn btn-success" %>
-      </div>
+      <%= render identity_matching_request do %>
+        <div class="text-end">
+          <%= link_to "Edit", edit_identity_matching_request_path(identity_matching_request) %> |
+          <%= link_to "Show More", identity_matching_request %>
+        </div>
+      <% end %>
 	</div>
   <% end %>
 </div>
