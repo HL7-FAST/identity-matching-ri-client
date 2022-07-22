@@ -7,6 +7,13 @@ class PatientServerController < ApplicationController
 	redirect_to new_identity_matching_request_path, notice: "Patient server set to #{@patient_server.base}."
   end
 
+  # GET /patient_server
+  def show
+	redirect_to(root_url, alert: "Please enter a FHIR server URL") unless session.key? :patient_server_id
+
+	@patient_server = PatientServer.find!(session[:patient_server_id])
+  end
+
   private
 
   def patient_server_params

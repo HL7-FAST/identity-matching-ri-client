@@ -3,25 +3,22 @@
 one:
   full_name: MyString
   date_of_birth: 2022-07-13
-  address_line1: MyString
-  address_line2: MyString
-  city: MyString
-  state: MyString
-  zipcode: MyString
-  email: MyString
-  mobile: MyString
-  response_status: 1
-  response_json: MyText
+  address_line1: st123
+  city: Boston
+  state: MA
+  zipcode: 10000
+  email: foo@example.com
+  mobile: 1234567890
+  response_status: 200
 
 two:
   full_name: MyString
   date_of_birth: 2022-07-13
-  address_line1: MyString
-  address_line2: MyString
-  city: MyString
-  state: MyString
-  zipcode: MyString
-  email: MyString
-  mobile: MyString
-  response_status: 1
-  response_json: MyText
+  address_line1: st456
+  address_line2: seven
+  city: NewYork
+  state: NY
+  zipcode: 20000
+  email: bar@example.com
+  mobile: 9876543210
+  response_status: 400

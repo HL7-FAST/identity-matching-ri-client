@@ -1,7 +1,7 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  base: MyString
+  base: localhost:4000
 
 two:
-  base: MyString
+  base: https://example.com
