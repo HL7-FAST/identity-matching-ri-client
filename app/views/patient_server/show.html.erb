@@ -1,0 +1,22 @@
+<h1>Patient Server</h1>
+
+<p>
+  <strong>Base URL</strong>
+  <code><%= @patient_server.base %></code>
+</p>
+
+<code class="fhir">
+  <%= @metadata %>
+</code>
+
+<script>
+function formatFhir() {
+  const elements = document.querySelectorAll('.fhir');
+  console.log('prettifying fhir for', elements.length, 'elements.')
+  Array.from(elements).forEach((element) => {prettifyJson(element)});
+}
+
+document.addEventListener("load", formatFhir);
+document.addEventListener("turbo:load", formatFhir);
+document.addEventListener("ready turbo:load", formatFhir);
+</script>

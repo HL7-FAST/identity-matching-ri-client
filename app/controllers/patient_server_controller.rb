@@ -11,7 +11,12 @@ class PatientServerController < ApplicationController
   def show
 	redirect_to(root_url, alert: "Please enter a FHIR server URL") unless session.key? :patient_server_id
 
-	@patient_server = PatientServer.find!(session[:patient_server_id])
+	@patient_server = PatientServer.find(session[:patient_server_id])
+	begin
+		@metadata = JSON.parse(Faraday.get(@patient_server.join('metadata')).body)
+	rescue Exception => exception
+		@metadata = exception
+	end
   end
 
   private
