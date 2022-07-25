@@ -1,5 +1,7 @@
 class PatientServerController < ApplicationController
 
+  before_action :set_patient_server, only: [:show]
+
   # POST /patient_servers
   def create
 	@patient_server = PatientServer.find_or_create_by!(patient_server_params)
@@ -9,13 +11,10 @@ class PatientServerController < ApplicationController
 
   # GET /patient_server
   def show
-	redirect_to(root_url, alert: "Please enter a FHIR server URL") unless session.key? :patient_server_id
-
-	@patient_server = PatientServer.find(session[:patient_server_id])
 	begin
-		@metadata = JSON.parse(Faraday.get(@patient_server.join('metadata')).body)
+		@metadata = Faraday.get(@patient_server.join('metadata')).body
 	rescue Exception => exception
-		@metadata = exception
+		@metadata = exception.to_json
 	end
   end
 
