@@ -21,17 +21,17 @@ class IdentityMatching < ApplicationRecord
   # returns:
   # 	FHIR::Model instance of IDIPatient profile
   def to_fhir
-	erb_params = {last_name: nil, given_names: nil, date_of_birth: nil, line1: nil, line2: nil, city: nil, state: nil, zipcode: nil, email: nil, mobile: nil, drivers_license: nil, gender: nil, nipi: nil}
-
-	#print "===\n", erb_params, "\n====\n"
+	erb_params = {
+		last_name: nil, given_names: nil, date_of_birth: nil,
+		line1: nil, line2: nil, city: nil, state: nil, zipcode: nil,
+		email: nil, mobile: nil, drivers_license: nil, gender: nil, nipi: nil
+	}
 
 	# parse name
 	if self.full_name
 	  names = self.full_name.strip.titleize.split();
 	  erb_params[:last_name] = names[-1];
 	  if names.length > 1
-	    #names.slice!(0, names.length - 1)
-	    #erb_params[:given_names] = names;
 		names.pop
 	    erb_params[:given_names] = names;
 	  end
@@ -64,10 +64,6 @@ class IdentityMatching < ApplicationRecord
 
 	idi_patient_json = IdentityMatching::MATCH_PARAMETER_ERB.result_with_hash(erb_params)
 
-	#puts "==="
-	#puts idi_patient_json
-	#puts "==="
-
 	return FHIR.from_contents( idi_patient_json )
   end
 
@@ -81,6 +77,7 @@ class IdentityMatching < ApplicationRecord
 	return false unless self.save
 
 	conn = Faraday.new(url: url, headers: {'Content-Type' => 'application/fhir+json'}) do |faraday|
+	  faraday.request :authorization, 'Bearer', Proc.new { ENV.fetch('BEARER_TOKEN', 'No Token') } # evaluate at runtime per request
 	  faraday.response :logger, nil, { bodies: true, log_level: :debug }
   	  faraday.response :raise_error
 	end

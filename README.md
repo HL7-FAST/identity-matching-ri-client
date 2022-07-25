@@ -16,6 +16,7 @@ yarn install
 bundle install
 rails db:migrate
 rails assets:precompile
+export BEARER_TOKEN=YOUR_SERVER_TOKEN_IF_ANY
 ./bin/dev
 ```
 
