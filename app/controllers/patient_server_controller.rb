@@ -6,7 +6,17 @@ class PatientServerController < ApplicationController
   def create
 	@patient_server = PatientServer.find_or_create_by!(patient_server_params)
 	session[:patient_server_id] = @patient_server.id
-	redirect_to new_identity_matching_request_path, notice: "Patient server set to #{@patient_server.base}."
+	flash.notice = "Patient server set to #{@patient_server.base}"
+
+	if commit_param == 'Match Patient'
+		redirect_to new_identity_matching_request_path
+	elsif commit_param == 'Register (UDAP)'
+		redirect_to udap_register_path
+	elsif commit_param == 'Authorize (OAuth)'
+		head 501 # TODO
+	else # Metadata
+		redirect_to patient_server_path
+	end
   end
 
   # GET /patient_server
@@ -14,6 +24,7 @@ class PatientServerController < ApplicationController
 	begin
 		@metadata = Faraday.get(@patient_server.join('metadata')).body
 	rescue Exception => exception
+		flash.now.alert = "An exception occurred"
 		@metadata = exception.to_json
 	end
   end
@@ -31,6 +42,11 @@ class PatientServerController < ApplicationController
 
 	sanitized_params[:base] = url
 	return sanitized_params
+  end
+
+  def commit_param
+	puts "COMMIT PARAM: #{params.require(:commit)}"
+	return params.require(:commit)
   end
 
 end

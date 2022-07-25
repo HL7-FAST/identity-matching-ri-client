@@ -4,11 +4,24 @@
 
 <p class="lead">Please enter a conforming server implementation to continue:</p>
 
-<%= form_for :patient_server, url: "/patient_servers", class: "row row-cols-md-auto g-3 justify-content-center" do |f| %>
-	<div class="col-auto">
-		<%= f.text_field :base, placeholder: "Enter Base URL. Ex: http://myserver.com/fhir/", class: "form-control", size: 64, required: true %>
+<%= form_for :patient_server, url: "/patient_servers", id: "patient_server_form" do |f| %>
+    <div class="row justify-content-center">
+		<div class="col-md-8 mb-3">
+			<%= f.text_field :base, placeholder: "Enter Base URL. Ex: http://myserver.com/fhir/", class: "form-control", size: 64, required: true %>
+		</div>
 	</div>
-	<div class="col-auto">
-		<%= f.submit "Continue", class: "btn btn-primary" %>
+	<div class="row row-cols-md-auto g-3 justify-content-center">
+		<div class="col-auto">
+			<%= f.submit "Metadata", class: "btn btn-warning" %>
+		</div>
+		<div class="col-auto">
+			<%= f.submit "Register (UDAP)", class: "btn btn-dark" %>
+		</div>
+		<div class="col-auto">
+			<%= f.submit "Authenticate (OAuth2)", class: "btn btn-danger", onclick: "alert('OAuth2 Not Implemented'); return false;" %>
+		</div>
+		<div class="col-auto">
+			<%= f.submit "Match Patient", class: "btn btn-primary" %>
+		</div>
 	</div>
 <% end %>

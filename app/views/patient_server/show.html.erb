@@ -5,7 +5,12 @@
   <code><%= @patient_server.base %></code>
 </p>
 
-<h3>metadata (compatability statement)</h3>
+<% if alert %>
+<h3 style="color:red;">Error</h3>
+<% else %>
+<h3>Metadata (compatability statement)</h3>
+<% end %>
+
 <code class="fhir" style="width:max-content;">
   <%= @metadata %>
 </code>
