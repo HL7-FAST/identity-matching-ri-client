@@ -10,4 +10,6 @@ Rails.application.routes.draw do
   get 'identity_matching_requests/example'
   resources :identity_matching_requests
 
+  get 'udap/register'
+
 end
