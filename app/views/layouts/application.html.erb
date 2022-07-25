@@ -39,6 +39,16 @@
 			element.innerHTML = prettyJson;
 			return true;
 		}
+
+		function formatFhir() {
+		  const elements = document.querySelectorAll('.fhir');
+		  console.log('prettifying fhir for', elements.length, 'elements.')
+		  Array.from(elements).forEach((element) => {prettifyJson(element)});
+		}
+
+		document.addEventListener("load", formatFhir);
+		document.addEventListener("turbo:load", formatFhir);
+		document.addEventListener("ready turbo:load", formatFhir);
 	</script>
   </head>
 
@@ -47,7 +57,7 @@
 	  <!-- flash notice message -->
 	  <% if notice %>
 		<div class="alert alert-success alert-dismissible fade show" role="alert">
-		  <strong>Notice</strong> <%= notice %>
+		  <strong>Notice:</strong> <%= notice %>
 		  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 		</div>
 	  <% end %>
@@ -55,7 +65,7 @@
 	  <!-- flash alert message -->
 	  <% if alert %>
 		<div class="alert alert-danger alert-dismissible fade show" role="alert">
-		  <strong>Alert</strong> <%= alert %>
+		  <strong>Alert:</strong> <%= alert %>
 		  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 		</div>
 	  <% end %>

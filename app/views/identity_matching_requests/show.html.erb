@@ -26,15 +26,3 @@
 <% else %>
   <h6>No valid response obtained from server</h6>
 <% end %>
-
-<script>
-function formatFhir() {
-  const elements = document.querySelectorAll('.fhir');
-  console.log('prettifying fhir for', elements.length, 'elements.')
-  Array.from(elements).forEach((element) => {prettifyJson(element)});
-}
-
-document.addEventListener("load", formatFhir);
-document.addEventListener("turbo:load", formatFhir);
-document.addEventListener("ready turbo:load", formatFhir);
-</script>

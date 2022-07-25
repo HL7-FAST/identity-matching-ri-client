@@ -4,21 +4,22 @@ class PatientServer < ApplicationRecord
   validates :base, format: { with: /\A(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?\z/ }
   validates :base, presence: true
 
-  # class method - construct <base_url>/Patient/$match
+  # construct url from base url
   # params:
-  # 	base_url: string
+  # 	args: strings or responds_to to_s
   # returns:
-  #     endpoint url: string
-  def self.endpoint(base_url)
-	if base_url.ends_with? '/'
-	  return base_url + 'Patient/$match'
-	else
-	  return base_url + '/Patient/$match'
-	end
+  # 	<base_url>/to/my/resource: string
+  def join(*args)
+	args.insert(0, self.base)
+	args.map! { |x| x.class == String ? x : x.to_s }
+	args.map! { |x| x.starts_with?('/') ? x.slice(1,x.length) : x }
+	args.map! { |x| x.ends_with?('/') ? x.chomp('/') : x }
+	return args.join('/')
   end
 
-  # getter for endpoint, built from base_url
+  # getter for identity-matching endpoint
   def endpoint
-	return self.class.endpoint( self.base )
+	return self.join('Patient', '$match');
   end
+
 end
