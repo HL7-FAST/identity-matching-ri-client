@@ -1,4 +1,4 @@
-class IdentityMatchingRequest < ApplicationRecord
+class IdentityMatching < ApplicationRecord
 
   # TODO: add validations
   validates :full_name, presence: true
@@ -62,7 +62,7 @@ class IdentityMatchingRequest < ApplicationRecord
 	erb_params[:drivers_license] = self.drivers_license.strip if self.drivers_license
 	erb_params[:nipi] = self.national_insurance_payer_identifier.strip if self.national_insurance_payer_identifier
 
-	idi_patient_json = IdentityMatchingRequest::MATCH_PARAMETER_ERB.result_with_hash(erb_params)
+	idi_patient_json = IdentityMatching::MATCH_PARAMETER_ERB.result_with_hash(erb_params)
 
 	#puts "==="
 	#puts idi_patient_json

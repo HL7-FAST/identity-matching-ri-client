@@ -5,10 +5,10 @@
   <%= link_to "Change Server", root_url, class: "btn btn-sm btn-secondary ms-3" %>
 </p>
 
-<%= render "form", identity_matching_request: @identity_matching_request %>
+<%= render "form", identity_matching: @identity_matching %>
 
 <br>
 
 <div>
-  <%= link_to "See previous identity matches", identity_matching_requests_path %>
+  <%= link_to "See previous identity matches", identity_matchings_path %>
 </div>

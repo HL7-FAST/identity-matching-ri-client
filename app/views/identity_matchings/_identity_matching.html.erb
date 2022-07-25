@@ -1,54 +1,54 @@
-<div id="<%= dom_id identity_matching_request %>" class="card shadow" style="width:24rem;">
+<div id="<%= dom_id identity_matching %>" class="card shadow" style="width:24rem;">
 
   <div class="card-body">
-	<h5 class="card-title"><%= identity_matching_request.full_name %></h5>
+	<h5 class="card-title"><%= identity_matching.full_name %></h5>
 	<h6 class="card-subtitle text-muted mb-2">
-	  Match attempted <%= identity_matching_request.updated_at.strftime('%r %x') %>
+	  Match attempted <%= identity_matching.updated_at.strftime('%r %x') %>
 	</h6>
   </div>
 
   <ul class="list-group list-group-flush">
     <li class="list-group-item">
       <strong>Date of birth:</strong>
-      <%= identity_matching_request.date_of_birth %>
+      <%= identity_matching.date_of_birth %>
     </li>
 
     <li class="list-group-item">
       <strong>Gender:</strong>
-      <%= identity_matching_request.gender&.downcase %>
+      <%= identity_matching.gender&.downcase %>
     </li>
 
     <li class="list-group-item">
       <strong>Address:</strong>
-      <%= identity_matching_request.address %>
+      <%= identity_matching.address %>
     </li>
 
     <li class="list-group-item">
       <strong>Email:</strong>
-      <%= identity_matching_request.email %>
+      <%= identity_matching.email %>
     </li>
 
     <li class="list-group-item">
       <strong>Mobile:</strong>
-      <%= identity_matching_request.mobile %>
+      <%= identity_matching.mobile %>
     </li>
 
     <li class="list-group-item">
       <strong>Driver's License:</strong>
-      <%= identity_matching_request.drivers_license %>
+      <%= identity_matching.drivers_license %>
     </li>
 
     <li class="list-group-item">
       <strong>NIIP:</strong>
-      <%= identity_matching_request.national_insurance_payer_identifier %>
+      <%= identity_matching.national_insurance_payer_identifier %>
     </li>
   </ul>
 
   <div class="card-body">
-    <% if identity_matching_request.response_status %>
+    <% if identity_matching.response_status %>
       <p>
         <strong>Response status:</strong>
-        <%= identity_matching_request.response_status %>
+        <%= identity_matching.response_status %>
       </p>
     <% else %>
       <p><strong>Not yet sent to server.</strong></p>

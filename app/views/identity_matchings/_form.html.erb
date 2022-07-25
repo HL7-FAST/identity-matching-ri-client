@@ -1,7 +1,7 @@
-<%= form_with(model: identity_matching_request) do |form| %>
+<%= form_with(model: identity_matching) do |form| %>
 
-  <% if identity_matching_request.errors.any? %>
-	<%= render "errors", identity_matching_request: identity_matching_request %>
+  <% if identity_matching.errors.any? %>
+	<%= render "errors", identity_matching: identity_matching %>
   <% end %>
 
   <div class="container">
@@ -90,7 +90,7 @@
 	<hr />
 
 	<div class="row mb-2 justify-content-center">
-	  <% if identity_matching_request.persisted? %>
+	  <% if identity_matching.persisted? %>
 	    <%= form.submit "Re-Match Identity", class: "btn btn-primary" %>	    
 	  <% else %>
 	    <%= form.submit "Match Identity", class: "btn btn-primary" %>

@@ -1,1 +1,0 @@
-json.partial! "identity_matching_requests/identity_matching_request", identity_matching_request: @identity_matching_request

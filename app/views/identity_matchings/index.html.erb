@@ -1,0 +1,25 @@
+<h1 class="w-100 text-center">Patient Identity Matches</h1>
+
+<div class="row justify-content-between my-3">
+  <div class="col-md-4 col-6 text-center">
+	<%= link_to "Change Server", root_path, class: "btn btn-secondary" %>
+  </div>
+  <div class="col-md-4 col-6 text-center">
+	<%= link_to "New identity matching request", new_identity_matching_path, class: "btn btn-primary" %>
+  </div>
+</div>
+
+
+<div class="row row-cols-md-3 g-2 align-items-around" id="identity_matchings">
+  <% @identity_matchings.each do |identity_matching| %>
+	<div class="col">
+      <%= render identity_matching do %>
+        <div class="text-end">
+          <%= link_to "Edit", edit_identity_matching_path(identity_matching) %> |
+          <%= link_to "Show More", identity_matching %>
+        </div>
+      <% end %>
+	</div>
+  <% end %>
+</div>
+
