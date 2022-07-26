@@ -24,12 +24,60 @@ class IdentityMatchingsController < ApplicationController
   def create
     @identity_matching = IdentityMatching.new(identity_matching_params)
 
-	# 1) save model and run validation
-    #   - validate input weight and level
-    #   - validate fhir json input if given
-    # 2) send payload to server and $match
-    # 3) parse and understand response
+	if @identity_matching.request_json.empty? then # build fhir json from model attributes
 
+		# Save model and run IDILevels validation
+		if !@identity_matching.save
+			flash.now.alert = "Save failed on client side, please check inputs."
+			render :new, status: :unprocessable_entity and return
+		end
+
+		# Build IDI Patient Profile and validate
+		if !@identity_matching.build_fhir_request
+			flash.now.alert = "Save failed on client side, inputs do not conform to IDI Patient Profile."
+			render :new, status: :unprocessable_entity and return
+		end
+
+	else # validate provided fhir request
+
+		# check JSON
+		begin
+			assert JSON.parse(@identity_matching.request_json)
+		rescue JSON::ParserError => exception
+			flash.now.alert = "Operation failed on client side - invalid JSON: #{exception}"
+			render :new, status: :unprocessable_entity and return
+		rescue Exception => exception
+			flash.now.alert = "Operation failed on client side - exception: #{exception}"
+			render :new, status: :unprocessable_entity and return
+		end
+
+		# check FHIR
+		if !@identity_matching.request_fhir.valid?
+			flash.now.alert = "Operation rejected by client - invalid FHIR input: #{@identity_matching.request_fhir.validate}"
+			render :new, status: :unprocessable_entity and return
+		end
+
+	end # if build fhir or use inputted fhir
+
+	# Send $match request to server with FHIR payload
+	if !@identity_matching.execute_request(@patient_server.endpoint)
+		redirect_to @identity_matching, alert: "FHIR Operation could not reach server #{@patient_server.endpoint}." and return
+	end
+
+	# Validate response
+	if !@identity_matching.response_fhir.valid?
+		redirect_to @identity_matching, alert: "Server returned invalid FHIR response." and return
+	end
+
+	# Interpret response
+	n = @identity_matching.number_of_matches
+	if n > 0
+		redirect_to @identity_matching, notice: "#{n} #{pluralize(n, 'match')} found!" and return
+	else
+		redirect_to @identity_matching, notice: "FHIR Matching preformed, no matches found." and return
+	end
+
+	<<COMMENT
     respond_to do |format|
       if @identity_matching.save_and_send(@patient_server.endpoint)
 		if @identity_matching.response_json && @identity_matching.response_json.fetch('total', 0) > 0
@@ -42,10 +90,20 @@ class IdentityMatchingsController < ApplicationController
         format.html { render :new, status: :unprocessable_entity }
       end
     end
+	COMMENT
   end
 
   # PATCH/PUT /identity_matching/1 or /identity_matching/1.json
   def update
+
+	if !@identity_matching.update(identity_matching_params)
+	  render :edit, alert: "Update failed on client side, input does not validate..." and return
+	end
+
+	# TODO flesh out
+	raise NotImplemented
+
+	<<COMMENT
     respond_to do |format|
       if @identity_matching.update(identity_matching_params) && @identity_matching.save_and_send(@patient_server.endpoint)
 		if @identity_matching.response_json && @identity_matching.response_json.fetch('total', 0) > 0
@@ -57,6 +115,7 @@ class IdentityMatchingsController < ApplicationController
         format.html { render :edit, status: :unprocessable_entity }
       end
     end
+	COMMENT
   end
 
   # DELETE /identity_matching/1 or /identity_matching/1.json

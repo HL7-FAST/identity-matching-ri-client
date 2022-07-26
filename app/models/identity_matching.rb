@@ -105,6 +105,13 @@ class IdentityMatching < ApplicationRecord
   # TODO: calculate weight
   # TODO: use l0 or l1 profiles
 
+  def execute_request(endpoint_url)
+	raise NotImplemented
+  end
+
+  def number_of_matches
+	raise NotImplemented
+  end
 
   # =================
   #	 OLD STUFF BELOW
