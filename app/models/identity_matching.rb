@@ -13,6 +13,8 @@ class IdentityMatching < ApplicationRecord
   # Load fhir profiles as JSON ERB templates
   MATCH_PARAMETER_ERB = ERB.new(File.read(Rails.root.join('resources', 'match_parameter.json.erb')))
   IDI_BASE_PARAMETER = ERB.new(File.read(Rails.root.join('resources', 'idi_base_parameter.json.erb')))
+  IDI_L0_PARAMETER = ERB.new(File.read(Rails.root.join('resources', 'idi_level0_parameter.json.erb')))
+  IDI_L1_PARAMETER = ERB.new(File.read(Rails.root.join('resources', 'idi_level1_parameter.json.erb')))
 
   # Identifier code system from IDIPatient Profile
   IDENTIFIER_SYSTEM = "http://terminology.hl7.org/CodeSystem/v2-0203";
@@ -88,12 +90,25 @@ class IdentityMatching < ApplicationRecord
 	ret
   end
 
-  #
+  # Constructs fhir json artifact from model attributes
+  # Utilizes files in resources/
+  # Uses fhir_models gem to validate
+  # Will overwrite old request fhir construct
+  # returns: true if fhir model is valid and saves successfully ELSE
+  #          false
   def build_request_fhir
 	fhir_json = IDI_BASE_PARAMETER.result_with_hash({model: self})
 	self.request_fhir = FHIR.from_contents(fhir_json)
-	self.save
+	self.request_fhir.valid? && self.save
   end
+
+  # TODO: calculate weight
+  # TODO: use l0 or l1 profiles
+
+
+  # =================
+  #	 OLD STUFF BELOW
+  # =================
 
   # build IDI Patient FHIR::Model
   # returns:
