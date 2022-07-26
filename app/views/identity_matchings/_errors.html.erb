@@ -1,0 +1,11 @@
+<%# param: identity_matching - IdentityMatchingRequest instance with errors %>
+
+<div class="alert alert-danger">
+  <h2><%= pluralize(identity_matching.errors.count, "error") %> occurred:</h2>
+
+  <ul>
+    <% identity_matching.errors.each do |error| %>
+      <li><%= error.full_message %></li>
+    <% end %>
+  </ul>
+</div>

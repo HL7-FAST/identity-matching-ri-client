@@ -9,7 +9,7 @@ class PatientServerController < ApplicationController
 	flash.notice = "Patient server set to #{@patient_server.base}"
 
 	if commit_param == 'Match Patient'
-		redirect_to new_identity_matching_request_path
+		redirect_to new_identity_matching_path
 	elsif commit_param == 'Register (UDAP)'
 		redirect_to udap_register_path
 	elsif commit_param == 'Authorize (OAuth)'
