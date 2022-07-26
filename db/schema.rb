@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_26_184444) do
+ActiveRecord::Schema[7.0].define(version: 2022_07_26_184534) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -55,7 +55,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_26_184444) do
     t.datetime "updated_at", null: false
     t.string "drivers_license"
     t.string "gender"
-    t.string "national_insurance_payer_identifier"
+    t.string "national_insurance_payor_identifier"
+    t.string "passport_number"
+    t.string "state_id_number"
+    t.string "language"
+    t.text "request_json"
+    t.integer "weight"
+    t.integer "idi_level"
+    t.boolean "unparsed"
   end
 
   create_table "patient_servers", force: :cascade do |t|
