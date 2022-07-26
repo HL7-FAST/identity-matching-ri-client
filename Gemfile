@@ -80,3 +80,5 @@ gem "fhir_models", "~> 4.2.1"
 # Use Faraday as http client
 gem "faraday"
 
+# Load .env file
+gem "dotenv-rails", "~> 2.8"
