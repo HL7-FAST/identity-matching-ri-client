@@ -1,20 +1,98 @@
 class IdentityMatching < ApplicationRecord
 
+  # IDI Patient Level
+  # http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/artifacts.html
+  enum :level, [:base, :level_0, :level_1]
+
   # TODO: add validations
   validates :full_name, presence: true
   validates :date_of_birth, presence: true
-
   # validates :email, format: { with: /@/ }
   # validates :mobile, format: { with: /[^\a]/ }
 
-  serialize :response_json, JSON
-
-  # Load fhir payload as JSON ERB template
+  # Load fhir profiles as JSON ERB templates
   MATCH_PARAMETER_ERB = ERB.new(File.read(Rails.root.join('resources', 'match_parameter.json.erb')))
+  IDI_BASE_PARAMETER = ERB.new(File.read(Rails.root.join('resources', 'idi_base_parameter.json.erb')))
+
+  # Identifier code system from IDIPatient Profile
+  IDENTIFIER_SYSTEM = "http://terminology.hl7.org/CodeSystem/v2-0203";
+
+  # parse request body as FHIR
+  # returns: FHIR::Model instance OR nil
+  def request_fhir
+	return nil unless self.request_json
+	FHIR.from_contents(self.request_json)
+  end
+
+  # parses fhir model into request body json
+  # param fhir_obj: FHIR::Model instance
+  # returns: nil or string (json)
+  def request_fhir=(fhir_obj)
+	return nil unless fhir_obj.is_a? FHIR::Model
+	self.request_json = fhir_obj.to_json
+  end
+
+  # parse response body as FHIR
+  # returns: FHIR::Model instance OR nil
+  def response_fhir
+	return nil unless self.response_json
+	FHIR.from_contents(self.response_json)
+  end
+
+  # parses fhir model into response body json
+  # param fhir_obj: FHIR::Model instance
+  # returns nil or string (json)
+  def response_fhir=(fhir_obj)
+	return nil unless fhir_obj.is_a? FHIR::Model
+	self.response_json = fhir_obj.to_json	
+  end
+
+  # parse full name and return last name
+  # returns: string
+  def last_name
+	return "" unless self.full_name.strip.include? ' '
+	self.full_name.strip.titleize.split.last
+  end
+
+  # parse full name and return all other names
+  # returns: array of strings
+  def given_names
+	names = self.full_name.strip.titleize.split
+	names.pop
+	names
+  end
+
+  # returns: boolean (true if given_names is not empty array, otherwise false)
+  def given_names?
+	!!self.given_names&.empty?
+  end
 
   # return pretty string for address
   def address
 	return "#{address_line1} #{address_line2}\n#{city} #{state} #{zipcode}"
+  end
+
+  # return true if any hard identifier is provided
+  def identifiers?
+	return self.drivers_license || self.national_insurance_payor_identifier || self.state_id_number || self.passport_number
+  end
+
+  # returns array of hashes that is convenient for templating fhir identifiers
+  # reference: http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/ValueSet-Identity-Identifier-vs.html
+  def identifiers
+	ret = []
+	ret << {system: IDENTIFIER_SYSTEM, code: 'DL', display: 'Drivers License', value: self.drivers_license} if self.drivers_license
+	ret << {system: IDENTIFIER_SYSTEM, code: 'NIIP', display: 'National Insurance Payor Identifier', value: self.national_insurance_payor_identifier} if self.national_insurance_payor_identifier
+	ret << {system: IDENTIFIER_SYSTEM, code: 'STID', display: 'State Level Identifier', value: self.state_id_number} if self.drivers_license
+	ret << {system: IDENTIFIER_SYSTEM, code: 'PPN', display: 'Drivers License', value: self.passport_number} if self.passport_number
+	ret
+  end
+
+  #
+  def build_request_fhir
+	fhir_json = IDI_BASE_PARAMETER.result_with_hash({model: self})
+	self.request_fhir = FHIR.from_contents(fhir_json)
+	self.save
   end
 
   # build IDI Patient FHIR::Model
@@ -22,9 +100,21 @@ class IdentityMatching < ApplicationRecord
   # 	FHIR::Model instance of IDIPatient profile
   def to_fhir
 	erb_params = {
-		last_name: nil, given_names: nil, date_of_birth: nil,
-		line1: nil, line2: nil, city: nil, state: nil, zipcode: nil,
-		email: nil, mobile: nil, drivers_license: nil, gender: nil, nipi: nil
+		last_name: nil,
+		given_names: nil,
+		gender: nil,
+		date_of_birth: nil,
+		line1: nil,
+		line2: nil,
+		city: nil,
+		state: nil,
+		zipcode: nil,
+		email: nil,
+		mobile: nil,
+		drivers_license: nil,
+		niip: nil,
+		state_id_number: nil,
+		passport_number: nil
 	}
 
 	# parse name
@@ -40,6 +130,7 @@ class IdentityMatching < ApplicationRecord
 	# gender
 	if self.gender
 		erb_params[:gender] = self.gender.strip.downcase
+		# should be male, female, other, or unknown
 	end
 
 	# parse date
@@ -60,7 +151,9 @@ class IdentityMatching < ApplicationRecord
 
 	# identifiers
 	erb_params[:drivers_license] = self.drivers_license.strip if self.drivers_license
-	erb_params[:nipi] = self.national_insurance_payer_identifier.strip if self.national_insurance_payer_identifier
+	erb_params[:niip] = self.national_insurance_payor_identifier.strip if self.national_insurance_payor_identifier
+	erb_params[:state_id_number] = self.state_id_number.strip if self.state_id_number
+	erb_params[:passport_number] = self.passport_number.strip if self.passport_number
 
 	idi_patient_json = IdentityMatching::MATCH_PARAMETER_ERB.result_with_hash(erb_params)
 
@@ -119,13 +212,5 @@ class IdentityMatching < ApplicationRecord
 	end
   end
 
-  # parse response body into FHIR::Model
-  # returns:
-  # 	FHIR::Model instance OR
-  #     nil (no response body)
-  def response_fhir
-	return nil unless response_json
-	FHIR.from_contents(response_json)
-  end
 
 end
