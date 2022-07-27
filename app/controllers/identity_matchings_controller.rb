@@ -24,8 +24,8 @@ class IdentityMatchingsController < ApplicationController
   def create
     @identity_matching = IdentityMatching.new(identity_matching_params)
 
+	# Save inputs
 	if @identity_matching.request_json.empty? then # build fhir json from model attributes
-
 		# Save model and run IDILevels validation
 		if !@identity_matching.save
 			flash.now.alert = "Save failed on client side, please check inputs."
@@ -37,9 +37,7 @@ class IdentityMatchingsController < ApplicationController
 			flash.now.alert = "Save failed on client side, inputs do not conform to IDI Patient Profile."
 			render :new, status: :unprocessable_entity and return
 		end
-
 	else # validate provided fhir request
-
 		# check JSON
 		begin
 			assert JSON.parse(@identity_matching.request_json)
@@ -56,11 +54,26 @@ class IdentityMatchingsController < ApplicationController
 			flash.now.alert = "Operation rejected by client - invalid FHIR input: #{@identity_matching.request_fhir.validate}"
 			render :new, status: :unprocessable_entity and return
 		end
-
-	end # if build fhir or use inputted fhir
+	end
 
 	# Send $match request to server with FHIR payload
-	if !@identity_matching.execute_request(@patient_server.endpoint)
+	payload = self.request_fhir.to_json
+	headers = {'Accept' => 'application/fhir+json', 'Content-Length' => payload.length.to_s, 'Content-Type' => 'application/fhir+json'}
+	headers.merge!({'Authorization' => "Bearer #{ENV['BEARER_TOKEN']}"}) if ENV.key? 'BEARER_TOKEN'
+	begin
+		response = RestClient.post(@patient_server.endpoint, payload, headers);
+		self.response_status = response.code
+		self.response_json = response.body
+		self.save
+	rescue RestClient::ExceptionWithResponse => exception
+		self.response_status = exception.response.code
+		self.response_json = exception.to_json
+		self.save
+		redirect_to @identity_matching, alert: "FHIR Server rejected payload" and return
+	rescue Exception => exception
+		self.response_status = nil
+		self.response_json = exception.to_json
+		self.save
 		redirect_to @identity_matching, alert: "FHIR Operation could not reach server #{@patient_server.endpoint}." and return
 	end
 

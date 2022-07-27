@@ -105,7 +105,13 @@ class IdentityMatching < ApplicationRecord
   # returns: true if fhir model is valid and saves successfully ELSE
   #          false
   def build_request_fhir
-	fhir_json = IDI_BASE_PARAMETER.result_with_hash({model: self})
+	if self.level == :idi_patient_l0
+		fhir_json = IDI_L0_PARAMETER.result_with_hash({model: self})
+	elsif self.level == :idi_patient_l1
+		fhir_json = IDI_L1_PARAMETER.result_with_hash({model: self})
+	else
+		fhir_json = IDI_BASE_PARAMETER.result_with_hash({model: self})
+	end
 	self.request_fhir = FHIR.from_contents(fhir_json)
 	self.request_fhir.valid? && self.save
   end
@@ -146,15 +152,12 @@ class IdentityMatching < ApplicationRecord
 	total
   end
 
-  def execute_request(endpoint_url)
-	raise StandardError.new "TODO execute_request"
-  end
 
   # returns number of matches found by server response
   # will return 0 even if request was never made
   # returns: int
   def number_of_matches
-	self.response_fhir.fetch('total', 0)
+	self.response_fhir.&fetch('total') || 0
   end
 
   # =================
