@@ -25,7 +25,7 @@ class IdentityMatchingsController < ApplicationController
     @identity_matching = IdentityMatching.new(identity_matching_params)
 
 	# Save inputs
-	if @identity_matching.request_json.empty? then # build fhir json from model attributes
+	if !@identity_matching.has?(:request_json) then # build fhir json from model attributes
 		# Save model and run IDILevels validation
 		if !@identity_matching.save
 			flash.now.alert = "Save failed on client side, please check inputs."
@@ -33,7 +33,7 @@ class IdentityMatchingsController < ApplicationController
 		end
 
 		# Build IDI Patient Profile and validate
-		if !@identity_matching.build_fhir_request
+		if !@identity_matching.build_request_fhir
 			flash.now.alert = "Save failed on client side, inputs do not conform to IDI Patient Profile."
 			render :new, status: :unprocessable_entity and return
 		end
@@ -57,23 +57,23 @@ class IdentityMatchingsController < ApplicationController
 	end
 
 	# Send $match request to server with FHIR payload
-	payload = self.request_fhir.to_json
+	payload = @identity_matching.request_fhir.to_json
 	headers = {'Accept' => 'application/fhir+json', 'Content-Length' => payload.length.to_s, 'Content-Type' => 'application/fhir+json'}
 	headers.merge!({'Authorization' => "Bearer #{ENV['BEARER_TOKEN']}"}) if ENV.key? 'BEARER_TOKEN'
 	begin
 		response = RestClient.post(@patient_server.endpoint, payload, headers);
-		self.response_status = response.code
-		self.response_json = response.body
-		self.save
+		@identity_matching.response_status = response.code
+		@identity_matching.response_json = response.body
+		@identity_matching.save!
 	rescue RestClient::ExceptionWithResponse => exception
-		self.response_status = exception.response.code
-		self.response_json = exception.to_json
-		self.save
+		@identity_matching.response_status = exception.response.code
+		@identity_matching.response_json = exception.to_json
+		@identity_matching.save!
 		redirect_to @identity_matching, alert: "FHIR Server rejected payload" and return
 	rescue Exception => exception
-		self.response_status = nil
-		self.response_json = exception.to_json
-		self.save
+		@identity_matching.response_status = nil
+		@identity_matching.response_json = exception.to_json
+		@identity_matching.save
 		redirect_to @identity_matching, alert: "FHIR Operation could not reach server #{@patient_server.endpoint}." and return
 	end
 
@@ -135,7 +135,7 @@ class IdentityMatchingsController < ApplicationController
 
     # Whitelist of input parameters
     def identity_matching_params
-	  PERMITTED_INPUTS = [
+	  permitted_inputs = [
 		:full_name,
 		:gender,
 		:date_of_birth,
@@ -154,7 +154,7 @@ class IdentityMatchingsController < ApplicationController
 		:request_json,
 	  ]
 
-      params.require(:identity_matching).permit( *PERMITTED_INPUTS )
+      params.require(:identity_matching).permit( *permitted_inputs )
     end
 
 end
