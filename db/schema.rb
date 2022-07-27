@@ -60,7 +60,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_26_184534) do
     t.string "state_id_number"
     t.string "language"
     t.text "request_json"
-    t.integer "weight"
     t.integer "idi_level"
     t.boolean "unparsed"
   end
