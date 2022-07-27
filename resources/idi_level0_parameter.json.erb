@@ -10,7 +10,7 @@
         "meta": {
           "lastUpdated": "<%= model.updated_at.iso8601 %>",
 		  "profile" : [
-		"http://hl7.org/fhir/us/identity-matching/StructureDefinition/IDI-Patient"
+			"http://hl7.org/fhir/us/identity-matching/StructureDefinition/IDI-Patient-L0"
 		  ]
         },
 
@@ -30,7 +30,7 @@
             },
             "value": "<%= identifier[:value] %>"
           }<% if idx + 1 < model.identifiers.length %>,<% end %>
-		  <% end %> <%# close identifiers.each %>
+		  <% end %>
         ],
 		<% end %>
 
@@ -96,7 +96,9 @@
 		"gender": "<%= model.gender %>",
 		<% end %>
 
+		<% if model.date_of_birth %>
         "birthDate": "<%= model.date_of_birth %>"
+		<% end %>
       }
     },
     {

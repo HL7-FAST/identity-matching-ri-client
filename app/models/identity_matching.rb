@@ -7,7 +7,7 @@ class IdentityMatching < ApplicationRecord
   # See: http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/artifacts.html
 
   # IDI Patient Level
-  enum :level, [:base, :level_0, :level_1]
+  enum :level, [ :idi_patient_base, :idi_patient_l0, :idi_patient_l1 ]
 
   # Photo
   has_one_attached :photo
@@ -123,7 +123,8 @@ class IdentityMatching < ApplicationRecord
   def weight
 	total = 0;
 	if self.has? :passport_number
-		# NOTE: This application assumes US Passport number, although could be any passport number by IG
+		# NOTE: Assumes US Passport number, although IG allows any nation's passport number,
+        #       in which case condition would be self.has?(:passport_number) && self.has?(:country)
 		total += 10;
 	end
 	if self.has?(:drivers_license) || self.has?(:state_id_number)
@@ -132,17 +133,28 @@ class IdentityMatching < ApplicationRecord
 	if self.has?(:address_line1) && (self.has?(:zipcode) || (self.has?(:city) && self.has?(:state))) ||
 	   self.has?(:email) ||
 	   self.has?(:phone_number) ||
-	   self.photo.attached?
+	   self.has?(:national_insurance_payor_identifier) ||
+	   self.photo.attached? then
 		total += 4;
 	end
+	if self.full_name&.split.length > 1
+		total += 4;
+	end
+	if self.date_of_birth
+		total += 2;
+	end
+	total
   end
 
   def execute_request(endpoint_url)
 	raise StandardError.new "TODO execute_request"
   end
 
+  # returns number of matches found by server response
+  # will return 0 even if request was never made
+  # returns: int
   def number_of_matches
-	raise StandardError.new "TODO number_of_matches"
+	self.response_fhir.fetch('total', 0)
   end
 
   # =================
