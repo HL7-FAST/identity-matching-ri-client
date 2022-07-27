@@ -34,7 +34,7 @@
         ],
 		<% end %>
 
-        <% if model.given_names? %>
+        <% if model.has? :given_names %>
         "name": [
           {
             "family": "<%= model.last_name %>",
@@ -94,6 +94,10 @@
 
 		<% if model.gender %>
 		"gender": "<%= model.gender %>",
+		<% end %>
+
+		<% if model.language %>
+		"language": "<%= model.language %>",
 		<% end %>
 
         "birthDate": "<%= model.date_of_birth %>"

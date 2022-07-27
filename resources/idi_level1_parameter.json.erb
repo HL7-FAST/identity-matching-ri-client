@@ -96,6 +96,10 @@
 		"gender": "<%= model.gender %>",
 		<% end %>
 
+		<% if model.language %>
+		"language": "<%= model.language %>"
+		<% end %>
+
 		<% if model.date_of_birth %>
         "birthDate": "<%= model.date_of_birth %>"
 		<% end %>

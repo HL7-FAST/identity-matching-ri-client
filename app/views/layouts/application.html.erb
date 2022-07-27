@@ -49,6 +49,18 @@
 		document.addEventListener("load", formatFhir);
 		document.addEventListener("turbo:load", formatFhir);
 		document.addEventListener("ready turbo:load", formatFhir);
+
+		function addHiddenField(form, name, value) {
+			let parent = document.querySelector(form);
+			let element = document.createElement('input');
+
+			element.setAttribute('type', 'hidden');
+			element.setAttribute('name', name);		
+			element.setAttribute('value', value);
+
+			parent.appendChild(element);
+			return true;
+		}
 	</script>
   </head>
 

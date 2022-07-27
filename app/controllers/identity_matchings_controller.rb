@@ -85,7 +85,7 @@ class IdentityMatchingsController < ApplicationController
 	# Interpret response
 	n = @identity_matching.number_of_matches
 	if n > 0
-		redirect_to @identity_matching, notice: "#{n} #{pluralize(n, 'match')} found!" and return
+		redirect_to @identity_matching, notice: "#{n} #{'match'.pluralize(n)} found!" and return
 	else
 		redirect_to @identity_matching, notice: "FHIR Matching preformed, no matches found." and return
 	end
@@ -151,6 +151,7 @@ class IdentityMatchingsController < ApplicationController
 		:national_payor_identifier,
 		:passport_number,
 		:state_id_number,
+		:idi_level,
 		:request_json,
 	  ]
 

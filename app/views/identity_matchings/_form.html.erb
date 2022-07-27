@@ -1,4 +1,5 @@
 <%= form_with(model: identity_matching) do |form| %>
+  <%= form.hidden_field :language, {value: 'en-US'} %>
 
   <% if identity_matching.errors.any? %>
 	<%= render "errors", identity_matching: identity_matching %>
@@ -91,9 +92,9 @@
 
 	<div class="row mb-2 justify-content-center">
 	  <% if identity_matching.persisted? %>
-	    <%= form.submit "Re-Match Identity", class: "btn btn-primary" %>	    
+	    <%= form.submit "Re-Match Identity", class: "btn btn-primary", onclick: "addHiddenField('form', 'idi_level', 'idi_patient_base')" %>
 	  <% else %>
-	    <%= form.submit "Match Identity", class: "btn btn-primary" %>
+	    <%= form.submit "Match Identity", class: "btn btn-primary", onclick: "addHiddenField('form', 'idi_level', 'idi_patient_base');" %>
 	  <% end %>
 	</div>
 
