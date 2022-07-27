@@ -40,7 +40,7 @@ class IdentityMatchingsController < ApplicationController
 	else # validate provided fhir request
 		# check JSON
 		begin
-			assert JSON.parse(@identity_matching.request_json)
+			JSON.parse(@identity_matching.request_json)
 		rescue JSON::ParserError => exception
 			flash.now.alert = "Operation failed on client side - invalid JSON: #{exception}"
 			render :new, status: :unprocessable_entity and return
@@ -114,7 +114,7 @@ class IdentityMatchingsController < ApplicationController
 	end
 
 	# TODO flesh out
-	raise NotImplemented
+	raise StandardError.new "Not Implemented"
 
 	<<COMMENT
     respond_to do |format|
