@@ -89,21 +89,6 @@ class IdentityMatchingsController < ApplicationController
 	else
 		redirect_to @identity_matching, notice: "FHIR Matching preformed, no matches found." and return
 	end
-
-	<<COMMENT
-    respond_to do |format|
-      if @identity_matching.save_and_send(@patient_server.endpoint)
-		if @identity_matching.response_json && @identity_matching.response_json.fetch('total', 0) > 0
-          format.html { redirect_to identity_matching_url(@identity_matching), notice: "Patient matches found!" }
-		else
-          format.html { redirect_to identity_matching_url(@identity_matching), notice: "Identity match attempted, no patients found." }
-		end
-      else
-		flash.now.alert = "There was an error, please check below."
-        format.html { render :new, status: :unprocessable_entity }
-      end
-    end
-	COMMENT
   end
 
   # PATCH/PUT /identity_matching/1 or /identity_matching/1.json
@@ -115,20 +100,6 @@ class IdentityMatchingsController < ApplicationController
 
 	# TODO flesh out
 	raise StandardError.new "Not Implemented"
-
-	<<COMMENT
-    respond_to do |format|
-      if @identity_matching.update(identity_matching_params) && @identity_matching.save_and_send(@patient_server.endpoint)
-		if @identity_matching.response_json && @identity_matching.response_json.fetch('total', 0) > 0
-          format.html { redirect_to identity_matching_url(@identity_matching), notice: "Identity matching request was successfully updated." }
-		else
-          format.html { redirect_to identity_matching_url(@identity_matching), notice: "Identity match updated, no patients found." }
-		end
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-      end
-    end
-	COMMENT
   end
 
   # DELETE /identity_matching/1 or /identity_matching/1.json
