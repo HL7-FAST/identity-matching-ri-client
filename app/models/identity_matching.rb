@@ -1,8 +1,16 @@
 class IdentityMatching < ApplicationRecord
+  # This model handles a IDIPatient profile, converting to/from FHIR JSON,
+  # sending request, and receiving response. Relies on active record validations
+  # to make this client's IDIPatient profile conform to IG, although technically
+  # only the server needs do validation.
+  #
+  # See: http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/artifacts.html
 
   # IDI Patient Level
-  # http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/artifacts.html
   enum :level, [:base, :level_0, :level_1]
+
+  # Photo
+  has_one_attached :photo
 
   # TODO: add validations
   validates :full_name, presence: true
@@ -102,15 +110,39 @@ class IdentityMatching < ApplicationRecord
 	self.request_fhir.valid? && self.save
   end
 
-  # TODO: calculate weight
   # TODO: use l0 or l1 profiles
 
+  # param sym: symbol (for attribute)
+  # returns: true if model has attribute string and string is not empty
+  def has?(sym)
+	!!( self.send(sym) && self.send(sym).respond_to?(:'empty?') && !self.send(sym).empty? )
+  end
+
+  # Compute "input quality and security" weight from model attributes according to IG
+  # returns: int (weight)
+  def weight
+	total = 0;
+	if self.has? :passport_number
+		# NOTE: This application assumes US Passport number, although could be any passport number by IG
+		total += 10;
+	end
+	if self.has?(:drivers_license) || self.has?(:state_id_number)
+		total += 10;
+	end
+	if self.has?(:address_line1) && (self.has?(:zipcode) || (self.has?(:city) && self.has?(:state))) ||
+	   self.has?(:email) ||
+	   self.has?(:phone_number) ||
+	   self.photo.attached?
+		total += 4;
+	end
+  end
+
   def execute_request(endpoint_url)
-	raise NotImplemented
+	raise StandardError.new "TODO execute_request"
   end
 
   def number_of_matches
-	raise NotImplemented
+	raise StandardError.new "TODO number_of_matches"
   end
 
   # =================
