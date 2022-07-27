@@ -157,7 +157,7 @@ class IdentityMatching < ApplicationRecord
   # will return 0 even if request was never made
   # returns: int
   def number_of_matches
-	self.response_fhir.&fetch('total') || 0
+	self.response_fhir.send(:total) || 0
   end
 
 end
