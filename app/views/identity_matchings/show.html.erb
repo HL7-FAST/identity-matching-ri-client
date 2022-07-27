@@ -4,7 +4,7 @@
     <%= link_to "All Identity Matches", identity_matchings_path %>
   </div>
   <div class="col text-end">
-    <%= link_to "Delete", @identity_matching, data: {turbo_method: :delete}, class: "btn btn-sm btn-dark d-inline" %>
+    <%= link_to "Delete", "/identity_matchings/#{@identity_matching.id}", data: {turbo_method: :delete}, class: "btn btn-sm btn-dark d-inline" %>
   </div>
 </div>
 
@@ -15,12 +15,12 @@
 </div>
 
 <h3>FHIR Request</h3>
-<code class="fhir"><%= @identity_matching.to_fhir.to_json %></code>
+<code class="fhir"><%= @identity_matching.request_json %></code>
 <hr />
 
 <h3>FHIR Response</h3>
 <% if @identity_matching.response_json %>
-  <code class="fhir"><%= @identity_matching.response_json.to_json %></code>
+  <code class="fhir"><%= @identity_matching.response_json %></code>
 <% elsif @identity_matching.errors.any? %>
   <%= render "errors", identity_matching: @identity_matching %>
 <% else %>

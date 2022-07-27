@@ -107,7 +107,7 @@ class IdentityMatchingsController < ApplicationController
     @identity_matching.destroy
 
     respond_to do |format|
-      format.html { redirect_to identity_matchings_url, notice: "Patient identity record deleted." }
+      format.html { redirect_to new_identity_matching_url, notice: "Patient identity record deleted.", status: :see_other }
     end
   end
 
