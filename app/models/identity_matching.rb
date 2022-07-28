@@ -91,10 +91,10 @@ class IdentityMatching < ApplicationRecord
   # reference: http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/ValueSet-Identity-Identifier-vs.html
   def identifiers
 	ret = []
-	ret << {system: IDENTIFIER_SYSTEM, code: 'DL', display: 'Drivers License', value: self.drivers_license} if self.drivers_license
-	ret << {system: IDENTIFIER_SYSTEM, code: 'NIIP', display: 'National Insurance Payor Identifier', value: self.national_insurance_payor_identifier} if self.national_insurance_payor_identifier
-	ret << {system: IDENTIFIER_SYSTEM, code: 'STID', display: 'State Level Identifier', value: self.state_id_number} if self.state_id_number
-	ret << {system: IDENTIFIER_SYSTEM, code: 'PPN', display: 'Passport Number', value: self.passport_number} if self.passport_number
+	ret << {system: IDENTIFIER_SYSTEM, code: 'DL', display: 'Drivers License', value: self.drivers_license} if self.has? :drivers_license
+	ret << {system: IDENTIFIER_SYSTEM, code: 'NIIP', display: 'National Insurance Payor Identifier', value: self.national_insurance_payor_identifier} if self.has? :national_insurance_payor_identifier
+	ret << {system: IDENTIFIER_SYSTEM, code: 'STID', display: 'State Level Identifier', value: self.state_id_number} if self.has? :state_id_number
+	ret << {system: IDENTIFIER_SYSTEM, code: 'PPN', display: 'Passport Number', value: self.passport_number} if self.has? :passport_number
 	ret
   end
 
@@ -105,9 +105,9 @@ class IdentityMatching < ApplicationRecord
   # returns: true if fhir model is valid and saves successfully ELSE
   #          false
   def build_request_fhir
-	if self.idi_level == :idi_patient_l0
+	if self.idi_patient_l0?
 		fhir_json = IDI_L0_PARAMETER.result_with_hash({model: self})
-	elsif self.idi_level == :idi_patient_l1
+	elsif self.idi_patient_l1?
 		fhir_json = IDI_L1_PARAMETER.result_with_hash({model: self})
 	else
 		fhir_json = IDI_BASE_PARAMETER.result_with_hash({model: self})

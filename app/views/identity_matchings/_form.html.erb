@@ -101,13 +101,13 @@
 
 	<div class="row mb-2 justify-content-around">
 	  <div class="col-auto">
-	    <%= form.submit "IDI Patient Match", class: "btn btn-primary", onclick: "addHiddenField('form', 'idi_level', 'idi_patient_base');" %>
+	    <%= form.submit "IDI Base Match", class: "btn btn-primary", onclick: "addHiddenField('form', 'identity_matching[idi_level]', 'idi_patient_base');" %>
 	  </div>
 	  <div class="col-auto">
-	    <%= form.submit "IDI Level 1 Match", class: "btn btn-warning", onclick: "addHiddenField('form', 'idi_level', 'idi_patient_l1');" %>
+	    <%= form.submit "IDI Level 0 Match", class: "btn btn-warning", onclick: "addHiddenField('form', 'identity_matching[idi_level]', 'idi_patient_l0');" %>
 	  </div>
 	  <div class="col-auto">
-	    <%= form.submit "IDI Level 2 Match", class: "btn btn-danger", onclick: "addHiddenField('form', 'idi_level', 'idi_patient_l2');" %>
+	    <%= form.submit "IDI Level 1 Match", class: "btn btn-danger", onclick: "addHiddenField('form', 'identity_matching[idi_level]', 'idi_patient_l1');" %>
 	  </div>
 	</div>
 
