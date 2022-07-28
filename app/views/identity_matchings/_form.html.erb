@@ -84,7 +84,7 @@
 		<%= form.text_field :drivers_license, class: "form-control", placeholder: "Driver's License" %>
 	  </div>
 	  <div class="col-6">
-		<%= form.text_field :national_insurance_payor_identifier, class: "form-control", placeholder: "National Insurance Payor Identifier" %>
+		<%= form.text_field :national_insurance_payor_identifier, class: "form-control", placeholder: "National Insurance Payer Identifier" %>
 	  </div>
 	</div>
 
@@ -101,19 +101,18 @@
 
 	<div class="row mb-2 justify-content-around">
 	  <div class="col-auto">
-		<%# data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="<em>Tooltip</em> <u>with</u> <b>HTML</b>" %>
 	    <%= form.submit "IDI Base Match", class: "btn btn-primary", onclick: "addHiddenField('form', 'identity_matching[idi_level]', 'idi_patient_base');",
-						data: { 'bs-toggle' => 'tooltip', 'bs-html' => 'true', 'bs-html' => 'Submit <b>any amount</b> of valuable information' }
+						data: { 'bs-toggle' => 'tooltip', 'bs-html' => 'true', 'bs-title' => 'Submit <b>any amount</b> of valuable information' }
 		%>
 	  </div>
 	  <div class="col-auto">
 	    <%= form.submit "IDI Level 0 Match", class: "btn btn-warning", onclick: "addHiddenField('form', 'identity_matching[idi_level]', 'idi_patient_l0');",
-						data: { 'bs-toggle' => 'tooltip', 'bs-html' => 'true', 'bs-html' => 'Submit valuable information with a promised minimum <b>weighted value score of 10</b>' }
+						data: { 'bs-toggle' => 'tooltip', 'bs-html' => 'true', 'bs-title' => 'Submit valuable information with a promised minimum <b>weighted value score of 10</b>' }
 		%>
 	  </div>
 	  <div class="col-auto">
 	    <%= form.submit "IDI Level 1 Match", class: "btn btn-danger", onclick: "addHiddenField('form', 'identity_matching[idi_level]', 'idi_patient_l1');",
-						data: { 'bs-toggle' => 'tooltip', 'bs-html' => 'true', 'bs-html' => 'Submit valuable information with a promised minimum <b>weighted value score of 20</b>' }
+						data: { 'bs-toggle' => 'tooltip', 'bs-html' => 'true', 'bs-title' => 'Submit valuable information with a promised minimum <b>weighted value score of 20</b>' }
 		%>
 	  </div>
 	</div>
