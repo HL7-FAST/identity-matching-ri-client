@@ -10,6 +10,7 @@
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
 
 	<script>
+		// helper function for .fhir class to pretty print fhir json
 		function syntaxHighlight(json) {
 		    if (typeof json != 'string') {
 		         json = JSON.stringify(json, undefined, 2);
@@ -32,35 +33,51 @@
 		    });
 		}
 
+		// helper function for .fhir class to pretty print fhir json
 		function prettifyJson(element) {
 			const uglyJson = element.innerHTML;
-			console.log(uglyJson);
 			const prettyJson = syntaxHighlight(JSON.stringify(JSON.parse(uglyJson),null,2));
 			element.innerHTML = prettyJson;
 			return true;
 		}
 
+		// THE function for .fhir class to pretty print fhir json
 		function formatFhir() {
 		  const elements = document.querySelectorAll('.fhir');
-		  console.log('prettifying fhir for', elements.length, 'elements.')
+		  console.log('Prettifying fhir for', elements.length, 'elements.')
 		  Array.from(elements).forEach((element) => {prettifyJson(element)});
 		}
 
+		// set callback triggers to format fhir json on webpage load
 		document.addEventListener("load", formatFhir);
 		document.addEventListener("turbo:load", formatFhir);
 		document.addEventListener("ready turbo:load", formatFhir);
 
+		// helper function to add hidden input element to form before submit
 		function addHiddenField(form, name, value) {
 			let parent = document.querySelector(form);
 			let element = document.createElement('input');
 
 			element.setAttribute('type', 'hidden');
-			element.setAttribute('name', name);		
+			element.setAttribute('name', name);
 			element.setAttribute('value', value);
 
 			parent.appendChild(element);
 			return true;
 		}
+
+		import bootstrap from "bootstrap";
+
+		function enableTooltips() {
+			const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+			const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+		}
+
+		// set callback to enable tooltips
+		document.addEventListener("load", enableTooltips);
+		document.addEventListener("turbo:load", enableTooltips);
+		document.addEventListener("ready turbo:load", enableTooltips);
+
 	</script>
   </head>
 

@@ -2,3 +2,4 @@
 import "@hotwired/turbo-rails"
 import "@rails/ujs"
 import * as bootstrap from "bootstrap"
+
