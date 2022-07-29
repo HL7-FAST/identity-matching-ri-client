@@ -49,6 +49,7 @@ document.addEventListener("ready turbo:load", formatFhir);
 
 // helper function to add hidden input element to form before submit
 function addHiddenField(form, name, value) {
+	console.log("Adding hidden field", name, "=", value);
 	let parent = document.querySelector(form);
 	let element = document.createElement('input');
 
@@ -63,7 +64,7 @@ function addHiddenField(form, name, value) {
 function enableTooltips() {
 	const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 	const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-	console.log("tooltips");
+	console.log("Enabling tooltips");
 }
 
 // set callback to enable tooltips

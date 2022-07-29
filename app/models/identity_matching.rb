@@ -12,11 +12,12 @@ class IdentityMatching < ApplicationRecord
   # Photo
   has_one_attached :photo
 
-  # TODO: add validations
+  # Validations
   validates :full_name, presence: true
   validates :date_of_birth, presence: true
-  validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }
-  validates :mobile, format: { with: /A(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\z/ }
+  #validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }
+  #validates :mobile, format: { with: /A(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\z/ }
+  validates_with WeightValidator
 
   # Load fhir profiles as JSON ERB templates
   MATCH_PARAMETER_ERB = ERB.new(File.read(Rails.root.join('resources', 'match_parameter.json.erb')))
@@ -138,7 +139,7 @@ class IdentityMatching < ApplicationRecord
 	end
 	if self.has?(:address_line1) && (self.has?(:zipcode) || (self.has?(:city) && self.has?(:state))) ||
 	   self.has?(:email) ||
-	   self.has?(:phone_number) ||
+	   self.has?(:mobile) ||
 	   self.has?(:national_insurance_payor_identifier) ||
 	   self.photo.attached? then
 		total += 4;

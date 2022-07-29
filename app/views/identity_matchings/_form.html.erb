@@ -101,17 +101,17 @@
 
 	<div class="row mb-2 justify-content-around">
 	  <div class="col-auto">
-	    <%= form.submit "IDI Base Match", class: "btn btn-primary", onclick: "addHiddenField('form', 'identity_matching[idi_level]', 'idi_patient_base');",
+	    <%= form.button "IDI Base Match", type: "submit", name: "identity_matching[idi_level]", value: "idi_patient_base", class: "btn btn-primary",
 						data: { 'bs-toggle' => 'tooltip', 'bs-html' => 'true', 'bs-title' => 'Submit <b>any amount</b> of valuable information' }
 		%>
 	  </div>
 	  <div class="col-auto">
-	    <%= form.submit "IDI Level 0 Match", class: "btn btn-warning", onclick: "addHiddenField('form', 'identity_matching[idi_level]', 'idi_patient_l0');",
+	    <%= form.button "IDI Level 0 Match", type: "submit", name: "identity_matching[idi_level]", value: "idi_patient_l0", class: "btn btn-warning",
 						data: { 'bs-toggle' => 'tooltip', 'bs-html' => 'true', 'bs-title' => 'Submit valuable information with a promised minimum <b>weighted value score of 10</b>' }
 		%>
 	  </div>
 	  <div class="col-auto">
-	    <%= form.submit "IDI Level 1 Match", class: "btn btn-danger", onclick: "addHiddenField('form', 'identity_matching[idi_level]', 'idi_patient_l1');",
+	    <%= form.button "IDI Level 1 Match", type: "submit", name: "identity_matching[idi_level]", value: "idi_patient_l1", class: "btn btn-danger",
 						data: { 'bs-toggle' => 'tooltip', 'bs-html' => 'true', 'bs-title' => 'Submit valuable information with a promised minimum <b>weighted value score of 20</b>' }
 		%>
 	  </div>

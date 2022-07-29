@@ -148,7 +148,7 @@ class IdentityMatchingsController < ApplicationController
 		:mobile,
 		:language,
 		:drivers_license,
-		:national_payor_identifier,
+		:national_insurance_payor_identifier,
 		:passport_number,
 		:state_id_number,
 		:idi_level,
