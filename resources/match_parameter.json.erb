@@ -20,7 +20,7 @@
           ]
         },
 
-		<% if drivers_license || nipi %>
+		<% if drivers_license || niip %>
         "identifier": [
 		  <% if drivers_license %>
           {
@@ -37,10 +37,10 @@
             "value": "<%= drivers_license %>"
           }
 		  <% end %>
-		  <% if drivers_license && nipi %>
+		  <% if drivers_license && niip %>
 		  ,
 		  <% end %>
-		  <% if nipi %>
+		  <% if niip %>
           {
             "type": {
               "coding": [
@@ -52,7 +52,7 @@
               ],
               "text": "National Insurance Payor Identifier"
             },
-            "value": "<%= nipi %>"
+            "value": "<%= niip %>"
           }
 		  <% end %>
         ],

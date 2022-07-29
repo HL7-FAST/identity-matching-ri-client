@@ -43,6 +43,6 @@ class IdentityMatchingsControllerTest < ActionDispatch::IntegrationTest
       delete identity_matching_url(@identity_matching)
     end
 
-    assert_redirected_to identity_matchings_url
+    assert_redirected_to new_identity_matching_url
   end
 end

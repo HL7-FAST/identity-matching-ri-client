@@ -18,4 +18,5 @@
 ActiveSupport::Inflector.inflections(:en) do |inflect|
 	inflect.acronym "OAuth"
 	inflect.acronym "UDAP"
+	inflect.acronym "IDI"
 end

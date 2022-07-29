@@ -39,8 +39,24 @@
     </li>
 
     <li class="list-group-item">
-      <strong>NIIP:</strong>
-      <%= identity_matching.national_insurance_payer_identifier %>
+      <strong>NIPI:</strong>
+      <%= identity_matching.national_insurance_payor_identifier %>
+    </li>
+
+    <li class="list-group-item">
+      <strong>Passport:</strong>
+      <%= identity_matching.passport_number %>
+    </li>
+
+    <li class="list-group-item">
+      <strong>State ID:</strong>
+      <%= identity_matching.state_id_number %>
+    </li>
+
+    <li class="list-group-item">
+      <strong>Level:</strong>
+      <%= identity_matching.idi_level&.titleize %>
+	  <span class="badge bg-success">Weight = <%= identity_matching.weight %></span>
     </li>
   </ul>
 
@@ -51,7 +67,7 @@
         <%= identity_matching.response_status %>
       </p>
     <% else %>
-      <p><strong>Not yet sent to server.</strong></p>
+      <p><strong>Not server response.</strong></p>
     <% end %>
 
 	<%= yield %>

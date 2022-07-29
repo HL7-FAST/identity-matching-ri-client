@@ -1,4 +1,5 @@
 <%= form_with(model: identity_matching) do |form| %>
+  <%= form.hidden_field :language, {value: 'en-US'} %>
 
   <% if identity_matching.errors.any? %>
 	<%= render "errors", identity_matching: identity_matching %>
@@ -83,18 +84,37 @@
 		<%= form.text_field :drivers_license, class: "form-control", placeholder: "Driver's License" %>
 	  </div>
 	  <div class="col-6">
-		<%= form.text_field :national_insurance_payer_identifier, class: "form-control", placeholder: "National Insurance Payer Identifier" %>
+		<%= form.text_field :national_insurance_payor_identifier, class: "form-control", placeholder: "National Insurance Payer Identifier" %>
+	  </div>
+	</div>
+
+	<div class="row mb-2">
+	  <div class="col-6">
+		<%= form.text_field :passport_number, class: "form-control", placeholder: "Passport Number" %>
+	  </div>
+	  <div class="col-6">
+		<%= form.text_field :state_id_number, class: "form-control", placeholder: "State ID" %>
 	  </div>
 	</div>
 
 	<hr />
 
-	<div class="row mb-2 justify-content-center">
-	  <% if identity_matching.persisted? %>
-	    <%= form.submit "Re-Match Identity", class: "btn btn-primary" %>	    
-	  <% else %>
-	    <%= form.submit "Match Identity", class: "btn btn-primary" %>
-	  <% end %>
+	<div class="row mb-2 justify-content-around">
+	  <div class="col-auto">
+	    <%= form.button "IDI Base Match", type: "submit", name: "identity_matching[idi_level]", value: "idi_patient_base", class: "btn btn-primary",
+						data: { 'bs-toggle' => 'tooltip', 'bs-html' => 'true', 'bs-title' => 'Submit <b>any amount</b> of valuable information' }
+		%>
+	  </div>
+	  <div class="col-auto">
+	    <%= form.button "IDI Level 0 Match", type: "submit", name: "identity_matching[idi_level]", value: "idi_patient_l0", class: "btn btn-warning",
+						data: { 'bs-toggle' => 'tooltip', 'bs-html' => 'true', 'bs-title' => 'Submit valuable information with a promised minimum <b>weighted value score of 10</b>' }
+		%>
+	  </div>
+	  <div class="col-auto">
+	    <%= form.button "IDI Level 1 Match", type: "submit", name: "identity_matching[idi_level]", value: "idi_patient_l1", class: "btn btn-danger",
+						data: { 'bs-toggle' => 'tooltip', 'bs-html' => 'true', 'bs-title' => 'Submit valuable information with a promised minimum <b>weighted value score of 20</b>' }
+		%>
+	  </div>
 	</div>
 
   </div>

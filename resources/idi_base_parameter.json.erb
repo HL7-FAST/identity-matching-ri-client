@@ -1,0 +1,111 @@
+{
+  "resourceType": "Parameters",
+  "id": "example-<%= model.id %>",
+  "parameter": [
+    {
+      "name": "resource",
+      "resource": {
+        "resourceType": "Patient",
+        "id": "<%= model.id %>",
+        "meta": {
+          "lastUpdated": "<%= model.updated_at.iso8601 %>",
+		  "profile" : [
+			"http://hl7.org/fhir/us/identity-matching/StructureDefinition/IDI-Patient"
+		  ]
+        },
+
+		<% if model.identifiers? %>
+        "identifier": [
+		  <% model.identifiers.each_with_index do |identifier, idx| %>
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "<%= identifier[:system] %>",
+                  "code": "<%= identifier[:code] %>",
+                  "display": "<%= identifier[:display] %>"
+                }
+              ],
+              "text": "<%= identifier[:display] %>"
+            },
+            "value": "<%= identifier[:value] %>"
+          }<% if idx + 1 < model.identifiers.length %>,<% end %>
+		  <% end %> <%# close identifiers.each %>
+        ],
+		<% end %>
+
+        <% if model.has? :given_names %>
+        "name": [
+          {
+            "family": "<%= model.last_name %>",
+            "given": <%= model.given_names %>
+          }
+        ],
+        <% else %>
+        "name": [
+          {
+            "family": "<%= model.last_name %>"
+          }
+        ],
+		<% end %>
+
+		<% if model.mobile %>
+		"telecom": [ {
+			"system": "phone",
+			"value": "<%= model.mobile %>",
+			"use": "mobile"
+		} ],
+		<% end %>
+
+		<% if model.email && !model.email.empty? %>
+		"telecom": [ {
+			"system": "email",
+			"value": "<%= model.email %>"
+		} ],
+		<% end %>
+
+		<% if !model.address.strip.empty? %>
+        "address": [
+          {
+            "type": "physical",
+            <% if model.address_line1 %>
+              "line": [
+                <% if model.address_line1 && model.address_line2 %>
+                  "<%= model.address_line1 %>",
+                  "<%= model.address_line2 %>"
+                <% else %>
+				  "<%= model.address_line1 %>"
+                <% end %>
+              ],
+            <% end %>
+			<% if model.city %>
+              "city": "<%= model.city %>",
+			<% end %>
+            <% if model.state %>
+              "state": "<%= model.state %>",
+            <% end %>
+            <% if model.zipcode %>
+              "postalCode": "<%= model.zipcode %>",
+            <% end %>
+            "use": "home"
+          }
+        ],
+        <% end %>
+
+		<% if model.gender %>
+		"gender": "<%= model.gender %>",
+		<% end %>
+
+		<% if model.language %>
+		"language": "<%= model.language %>",
+		<% end %>
+
+        "birthDate": "<%= model.date_of_birth %>"
+      }
+    },
+    {
+      "name": "onlyCertainMatches",
+      "valueBoolean": "true" <%# TODO: make optional %>
+    }
+  ]
+}
