@@ -15,8 +15,8 @@ class IdentityMatching < ApplicationRecord
   # TODO: add validations
   validates :full_name, presence: true
   validates :date_of_birth, presence: true
-  # validates :email, format: { with: /@/ }
-  # validates :mobile, format: { with: /[^\a]/ }
+  validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }
+  validates :mobile, format: { with: /A(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\z/ }
 
   # Load fhir profiles as JSON ERB templates
   MATCH_PARAMETER_ERB = ERB.new(File.read(Rails.root.join('resources', 'match_parameter.json.erb')))
