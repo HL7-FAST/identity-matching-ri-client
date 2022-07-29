@@ -39,7 +39,7 @@
     </li>
 
     <li class="list-group-item">
-      <strong>NIIP:</strong>
+      <strong>NIPI:</strong>
       <%= identity_matching.national_insurance_payor_identifier %>
     </li>
 
@@ -55,7 +55,8 @@
 
     <li class="list-group-item">
       <strong>Level:</strong>
-      <%= identity_matching.idi_level %>
+      <%= identity_matching.idi_level&.titleize %>
+	  <span class="badge bg-success">Weight = <%= identity_matching.weight %></span>
     </li>
   </ul>
 
