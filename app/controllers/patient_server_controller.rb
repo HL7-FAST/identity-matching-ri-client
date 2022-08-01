@@ -12,8 +12,8 @@ class PatientServerController < ApplicationController
 		redirect_to new_identity_matching_path
 	elsif commit_param == 'Register (UDAP)'
 		redirect_to udap_register_path
-	elsif commit_param == 'Authorize (OAuth)'
-		head 501 # TODO
+	elsif commit_param == 'Authenticate (OAuth2)'
+		redirect_to oauth2_start_path
 	else # Metadata
 		redirect_to patient_server_path
 	end

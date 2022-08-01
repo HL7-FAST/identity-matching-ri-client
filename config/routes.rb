@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-
   root 'welcome#index'
   get 'welcome/index'
   get 'index', {controller: :welcome_controller, action: :index}
@@ -11,5 +10,7 @@ Rails.application.routes.draw do
   resources :identity_matchings
 
   get 'udap/register'
+  get 'oauth2/start'
+  get 'oauth2/redirect'
 
 end
