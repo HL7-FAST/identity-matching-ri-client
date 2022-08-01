@@ -15,7 +15,7 @@ class PatientServerTest < ActiveSupport::TestCase
 	puts "WARNING: Atleast one PatientServer path must exist in database"
 	puts "WARNING: An Identity Matching Server must be running at port 4000 for this test to pass"
 	assert_nothing_raised do
-      response = Faraday.options(PatientServer.last&.base)
+      response = RestClient.options(PatientServer.last&.base)
     end
   end
 
