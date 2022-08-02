@@ -75,6 +75,7 @@ end
 
 # Use FHIR gem
 gem "fhir_models", "~> 4.2.1"
+gem "fhir_client"
 
 # Use RestClient for HTTP requests
 gem "rest-client"
