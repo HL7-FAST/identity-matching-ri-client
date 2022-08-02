@@ -1,2 +1,8 @@
 <h1>OAuth2...</h1>
-<p>Find me in app/views/oauth2/start.html.erb</p>
+
+<p class="">Base URL: <%= @patient_server.base %></p>
+<p class="">Bearer Token: <%= ENV.fetch('BEARER_TOKEN', 'No Token') %></p>
+<p class="">Client Id: <%= ENV.fetch('CLIENT_ID', 'No Client Id') %></p>
+<p class="">Client Secret: <%= ENV.fetch('CLIENT_SECRET', 'No Secret') %></p>
+
+<%= link_to "Click me to start OAuth2", oauth2_restart_url, class: "btn btn-primary" %>

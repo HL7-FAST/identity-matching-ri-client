@@ -31,6 +31,10 @@ class Oauth2Controller < ApplicationController
   around_action :set_client
 
   def start
+	# renders webpage that resets HTTP headers and gives button to Oauth2Controller#restart
+  end
+
+  def restart
 	options = @client.get_oauth2_metadata_from_conformance
 	Rails.logger.debug "SERVER OAUTH2 POINTS:"
 	Rails.logger.debug options
@@ -48,9 +52,11 @@ class Oauth2Controller < ApplicationController
     @authorize_url = options[:authorize_url] + "?" + @auth_params.to_query
 	Rails.logger.debug @authorize_url
 	session[:authorize_url] = @authorize_url
+	
+	#response.headers.delete_if! { |header| header.upcase == 'X-CSRF-TOKEN' } # CORS policy rejects request with headers not in Access-Control-Allow-Headers, and CSRF protection is done by state param
 
-    #redirect_to(@authorize_url, {allow_other_host: true}) and return
-	render :debug
+    redirect_to(@authorize_url, {allow_other_host: true}) and return
+	#render :debug
   end
 
   def redirect

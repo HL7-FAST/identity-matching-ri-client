@@ -11,6 +11,7 @@ Rails.application.routes.draw do
 
   get 'udap/register'
   get 'oauth2/start'
+  get 'oauth2/restart'
   get 'oauth2/redirect'
 
 end
