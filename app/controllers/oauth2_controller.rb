@@ -14,6 +14,7 @@ class Oauth2Controller < ApplicationController
 	  host: @patient_server.base
 	);
 	authorization_url = @oauth2_client.authorization_uri(state: @state);
+	redirect_to authorization_url and return
 
 =begin
 	options = @client.get_oauth2_metadata_from_conformance
@@ -32,11 +33,21 @@ class Oauth2Controller < ApplicationController
 	flash.notice = "OAuth2 Success? #{client}"
 	reply = @client.read_feed(FHIR::Patient)
 	Rails.logger.debug reply.to_s
-=end
 	redirect_to root_url and return
+=end
   end
 
   def redirect
+	if params[:state] != session[:oauth2_state]
+	  flash.now.alert = "OAuth2 state does not match!"
+	  render :error, status: 400
+	end
+
+	@token = client.access_token!
+	flash.notice = "OAuth2 success - obtained token #{@token}"
+	ENV['BEARER_TOKEN'] = @token
+	
+	redirect_to root_url
   end
 
   private
