@@ -22,7 +22,7 @@ class PatientServerController < ApplicationController
   # GET /patient_server
   def show
 	begin
-		@metadata = Faraday.get(@patient_server.join('metadata')).body
+		@metadata = RestClient.get(@patient_server.join('metadata')).body
 	rescue Exception => exception
 		flash.now.alert = "An exception occurred"
 		@metadata = exception.to_json

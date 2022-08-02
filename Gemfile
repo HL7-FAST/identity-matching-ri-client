@@ -85,3 +85,4 @@ gem "dotenv-rails", "~> 2.8"
 
 # Use OAuth2 gem
 gem "rack-oauth2"
+
