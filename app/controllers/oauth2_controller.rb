@@ -56,6 +56,13 @@ class Oauth2Controller < ApplicationController
 		token_endpoint_auth_method: "private_key-jwt",
 		scope: "system/Patient.read system/Observation.read"
 	}
+
+	token = JWT.encode(payload, nil, 'none'). # TODO: load certificate chan and use x5c algorithm
+	resposne = RestClient.post(@patient_server.join('oauth','register'), payload=token, nil); # TODO
+
+	# TODO check response
+
+	redirct_to :root_ril
   end
 
   # GET /oauth2/restart
