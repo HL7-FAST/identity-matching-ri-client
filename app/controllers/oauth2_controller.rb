@@ -1,3 +1,5 @@
+
+# Open class for debugging
 class FHIR::Client
 
     # Set the client to use OpenID Connect OAuth2 Authentication
@@ -30,10 +32,34 @@ class Oauth2Controller < ApplicationController
   before_action :set_patient_server
   around_action :set_client
 
+  # GET /oauth2/start
+  # follows PatientServerController#create to reset HTTP headers
   def start
-	# renders webpage that resets HTTP headers and gives button to Oauth2Controller#restart
   end
 
+  # POST /oauth2/register
+  # preform client registration as specified in security spec
+  def register
+	payload = {
+		iss: "#{root_url}",
+		sub: "client_id?",
+		aud: "#{@patient_server.join('oauth','register')}", # TODO: fetch from capability statement
+		#exp: (now + 4.5).to_i, # TODO
+		iat: now.to_i,
+		jti: SecureRandom.base58,
+		client_name: "encode.rb",
+		redirect_uris: "[\"#{oauth2_redirect_url}\"]",
+		contacts: '["mailto:shaumikashraf@mitre.org"]',
+		logo_uri: "https://hl7.org/fhir/assets/images/fhir-logo.png",
+		grant_types: "authorization_code",
+		response_types: '["code"]',
+		token_endpoint_auth_method: "private_key-jwt",
+		scope: "system/Patient.read system/Observation.read"
+	}
+  end
+
+  # GET /oauth2/restart
+  # initiate actual oauth2 protocol
   def restart
 	options = @client.get_oauth2_metadata_from_conformance
 	Rails.logger.debug "SERVER OAUTH2 POINTS:"
@@ -59,6 +85,8 @@ class Oauth2Controller < ApplicationController
 	#render :debug
   end
 
+  # GET /oauth2/redirect
+  # oauth2 redirect endpoint
   def redirect
 	Rails.logger.debug "HIT CLIENT REDIRECT"
 
