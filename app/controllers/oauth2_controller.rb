@@ -45,7 +45,7 @@ class Oauth2Controller < ApplicationController
 		sub: "client_id?",
 		aud: "#{@patient_server.join('oauth','register')}", # TODO: fetch from capability statement
 		#exp: (now + 4.5).to_i, # TODO
-		iat: now.to_i,
+		iat: DateTime.now.to_i,
 		jti: SecureRandom.base58,
 		client_name: "encode.rb",
 		redirect_uris: "[\"#{oauth2_redirect_url}\"]",

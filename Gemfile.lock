@@ -310,6 +310,7 @@ DEPENDENCIES
   fhir_models (~> 4.2.1)
   jbuilder
   jsbundling-rails
+  jwt
   pry
   puma (~> 5.0)
   rack-oauth2
