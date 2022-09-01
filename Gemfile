@@ -73,15 +73,17 @@ group :test do
   gem "webdrivers"
 end
 
-# Use FHIR gems
+# Use FHIR gem
 gem "fhir_models", "~> 4.2.1"
-#gem "fhir_client"
+gem "fhir_client"
 
-# Use Faraday as http client
-gem "faraday"
-
-# WIP: replace faraday with RestClient
+# Use RestClient for HTTP requests
 gem "rest-client"
 
 # Load .env file
 gem "dotenv-rails", "~> 2.8"
+
+# Use OAuth2 gem
+gem "rack-oauth2"
+
+gem "jwt"

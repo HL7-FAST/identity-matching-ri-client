@@ -22,4 +22,7 @@ class PatientServer < ApplicationRecord
 	return self.join('Patient', '$match');
   end
 
+  def to_s
+    base
+  end
 end
