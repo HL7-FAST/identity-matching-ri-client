@@ -22,7 +22,7 @@ class PatientServerController < ApplicationController
   # GET /patient_server
   def show
 	begin
-		@metadata = RestClient.get(@patient_server.join('metadata')).body
+		@metadata = RestClient.get(@patient_server.join('metadata'), headers={accept: 'application/fhir+json'}).body
 	rescue Exception => exception
 		flash.now.alert = "An exception occurred"
 		@metadata = exception.to_json
