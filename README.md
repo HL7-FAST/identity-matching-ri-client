@@ -1,5 +1,5 @@
 # Identity Matching RI Client
-Identity Matching Reference Implementation client web app as required by the HL7 FAST project (for healthcare interoperability scaling).
+Reference implementation (RI) client for [Interoperable Identity and Patient Matching](http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/) and [UDAP Security](https://build.fhir.org/ig/HL7/fhir-udap-security-ig/) implementation guides.
 
 ## Dependencies
  - [Ruby 3.1.2](https://www.ruby-lang.org/en/)
@@ -10,14 +10,36 @@ Identity Matching Reference Implementation client web app as required by the HL7
  - [ESBuild](https://esbuild.github.io/)
 
 ## Quickstart
-From in repo,
+1. Install libraries
+```bash
+$ yarn install
+$ bundle install
 ```
-yarn install
-bundle install
-rails db:migrate
-rails assets:precompile
-export BEARER_TOKEN=YOUR_SERVER_TOKEN_IF_ANY
-./bin/dev
+
+2. Setup database
+```bash
+$ rails db:migrate
+```
+
+3. Ensure Rails assets pipeline works
+```
+$ rails assets:precompile
+```
+
+4. Add security credentials if any
+ - `export BEARER_TOKEN=[your token]` for hard coded token-based authorization OR
+ - `export CLIENT_ID=[your app id] CLIENT_SECRET=[your secret]` as pre-registered OAuth2 client
+
+Alternatively you can create a `.env` file and set the environment variables, for example:
+```dotenv
+# .env
+CLIENT_ID=[your app id]
+CLIENT_SECRET=[your secret]
+```
+
+5. Launch server
+```bash
+$ rails server
 ```
 
 ## License
