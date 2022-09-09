@@ -1,32 +1,3 @@
-=begin
-# Open class for debugging
-class FHIR::Client
-
-    # Set the client to use OpenID Connect OAuth2 Authentication
-    # client -- client id
-    # secret -- client secret
-    # authorize_path -- absolute path of authorization endpoint
-    # token_path -- absolute path of token endpoint
-    def set_oauth2_auth(client, secret, authorize_path, token_path, site = nil)
-      FHIR.logger.info 'Configuring the client to use OpenID Connect OAuth2 authentication.'
-	  Rails.logger.debug "HIJACKED"
-
-      @use_oauth2_auth = true
-      @use_basic_auth = false
-      @security_headers = {}
-      options = {
-        site: site || @base_service_url,
-        authorize_url: authorize_path,
-        token_url: token_path,
-        raise_errors: true
-      }
-      client = OAuth2::Client.new(client, secret, options)
-      client.connection.proxy(proxy) unless proxy.nil?
-      @client = client.client_credentials.get_token
-    end
-end
-=end
-
 class Oauth2Controller < ApplicationController
 
   before_action :set_patient_server
@@ -87,11 +58,12 @@ class Oauth2Controller < ApplicationController
 	end
     session[:token_url] = options[:token_url]
 
+    session[:state] = SecureRandom.uuid;
     @auth_params = {
         :response_type => 'code',
         :client_id => ENV["CLIENT_ID"],
         :redirect_uri => oauth2_redirect_url,
-        :state => SecureRandom.uuid,
+        :state => session[:state],
         :aud => @patient_server.base
     }
 
@@ -114,7 +86,13 @@ class Oauth2Controller < ApplicationController
     @access_token = params[:access_token]
 
     if @code.present?
-        @state = params[:state] # TODO: validate state
+        @state = params[:state]
+        if @state != session[:state]
+            Rails.logger.error("Oauth2 state does not match!")
+            Rails.logger.error("Received state: #{@state}")
+            Rails.logger.error("Expected state: #{session[:state]}")
+            flash.now.alert = "Oauth state does not match, received: #{@state}, expected: #{session[:state]}"
+        end
 
 		@token_params = {
             :grant_type => 'authorization_code',
