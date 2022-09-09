@@ -6,6 +6,20 @@ class Oauth2Controller < ApplicationController
   # GET /oauth2/start
   # follows PatientServerController#create to reset HTTP headers
   def start
+
+    begin
+        response = RestClient.get(@patient_server.join('.well-known', 'udap'))
+        @udap_metadata = JSON.parse(response.body)
+    rescue RestClient::ExceptionWithResponse => e
+        response = e.response
+        flash.now.alert = "#{@patient_server} does not support UDAP (missing /.well-known/udap)."
+    rescue Exception => e
+        flash.now.alert = "#{@patient_server.join('.well-known','udap')} is not valid JSON"
+    ensure
+        @udap_metadata ||= {}
+    end
+
+
   end
 
   # POST /oauth2/register

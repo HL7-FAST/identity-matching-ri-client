@@ -5,5 +5,13 @@
 <p class="">Client Id: <%= ENV.fetch('CLIENT_ID', 'No Client Id') %></p>
 <p class="">Client Secret: <%= ENV.fetch('CLIENT_SECRET', 'No Secret') %></p>
 
+<h3>UDAP metadata</h3>
+<pre>
+    <code>
+        <%= @udap_metadata %>
+    </code>
+</pre>
+
+
 <%= link_to "Sign In via OAuth2", oauth2_restart_url, class: "btn btn-primary" %>
 <%= link_to "Register for OAuth2", oauth2_register_url, class: "btn btn-primary", data: {turbo_method: :post} %>
