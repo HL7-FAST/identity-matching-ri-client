@@ -42,6 +42,8 @@ CLIENT_SECRET=[your secret]
 $ rails server
 ```
 
+6. Go to <http://localhost:3000>
+
 ## License
 
 Copyright 2022 The MITRE Corporation
