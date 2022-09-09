@@ -30,7 +30,7 @@ $ rails assets:precompile
  - `export BEARER_TOKEN=[your token]` for hard coded token-based authorization OR
  - `export CLIENT_ID=[your app id] CLIENT_SECRET=[your secret]` as pre-registered OAuth2 client
 
-Alternatively you can create a `.env` file and set the environment variables, for example:
+Alternatively you can create a [.env](https://github.com/bkeepers/dotenv#usage) file and set the environment variables, for example:
 ```dotenv
 # .env
 CLIENT_ID=[your app id]
