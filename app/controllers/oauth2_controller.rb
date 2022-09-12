@@ -7,6 +7,11 @@ class Oauth2Controller < ApplicationController
   # follows PatientServerController#create to reset HTTP headers
   def start
 
+    @bearer_token = ENV.fetch('BEARER_TOKEN', 'No Token')
+    @client_id = ENV.fetch('CLIENT_ID', 'No Client Id')
+    @client_secret = ENV.fetch('CLIENT_SECRET', 'No Client Secret')
+    @identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
+
     begin
         response = RestClient.get(@patient_server.join('.well-known', 'udap'))
         @udap_metadata = JSON.parse(response.body)
@@ -48,14 +53,19 @@ class Oauth2Controller < ApplicationController
     x509_cert_chain = [ self_signed_x509_cert(rsa_private_key, rsa_public_key) ] # TODO: load PEM cert chain option
 	token = JWT.encode(payload, rsa_private_key, 'RS256', { x5c: "#{x509_cert_chain}" })
 
-	response = RestClient.post(@patient_server.join('oauth','register'), payload=token, nil)
+    begin
+	    response = RestClient.post(@patient_server.join('oauth','register'), payload=token, nil)
+    rescue Exception => e
+        response = e.response
+        flash.alert = "Failed to send request to #{@patient_server.join('oauth','register')}"
+    end
 
 	# TODO check response
     Rails.logger.debug "== OAUTH2 REGISTER RESPONSE =="
     Rails.logger.debug response.to_json
     Rails.logger.debug "=============================="
 
-	redirect_to :root_url
+	redirect_to root_url
   end
 
   # GET /oauth2/restart
