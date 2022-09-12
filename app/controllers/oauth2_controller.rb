@@ -16,7 +16,7 @@ class Oauth2Controller < ApplicationController
     rescue Exception => e
         flash.now.alert = "#{@patient_server.join('.well-known','udap')} is not valid JSON"
     ensure
-        @udap_metadata ||= {}
+        @udap_metadata ||= {"error" => e}
     end
 
 

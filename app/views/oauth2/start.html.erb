@@ -6,11 +6,9 @@
 <p class="">Client Secret: <%= ENV.fetch('CLIENT_SECRET', 'No Secret') %></p>
 
 <h3>UDAP metadata</h3>
-<pre>
-    <code>
-        <%= @udap_metadata %>
-    </code>
-</pre>
+<code class="json" style="width:max-content;">
+    <%= @udap_metadata.to_json %>
+</code>
 
 
 <%= link_to "Sign In via OAuth2", oauth2_restart_url, class: "btn btn-primary" %>

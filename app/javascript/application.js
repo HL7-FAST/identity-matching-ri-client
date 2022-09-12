@@ -4,7 +4,7 @@ import "@rails/ujs"
 import * as popper from '@popperjs/core';
 import * as bootstrap from "bootstrap"
 
-// helper function for .fhir class to pretty print fhir json
+// helper function for .json class to pretty print fhir json
 function syntaxHighlight(json) {
     if (typeof json != 'string') {
          json = JSON.stringify(json, undefined, 2);
@@ -27,7 +27,7 @@ function syntaxHighlight(json) {
     });
 }
 
-// helper function for .fhir class to pretty print fhir json
+// helper function for .json class to pretty print fhir json
 function prettifyJson(element) {
 	const uglyJson = element.innerHTML;
 	const prettyJson = syntaxHighlight(JSON.stringify(JSON.parse(uglyJson),null,2));
@@ -35,17 +35,17 @@ function prettifyJson(element) {
 	return true;
 }
 
-// THE function for .fhir class to pretty print fhir json
-function formatFhir() {
-  const elements = document.querySelectorAll('.fhir');
-  console.log('Prettifying fhir for', elements.length, 'elements.')
+// THE function for .json class to pretty print fhir json
+function formatJson() {
+  const elements = document.querySelectorAll('.json');
+  console.log('Prettifying json for', elements.length, 'elements.')
   Array.from(elements).forEach((element) => {prettifyJson(element)});
 }
 
 // set callback triggers to format fhir json on webpage load
-document.addEventListener("load", formatFhir);
-document.addEventListener("turbo:load", formatFhir);
-document.addEventListener("ready turbo:load", formatFhir);
+document.addEventListener("load", formatJson);
+document.addEventListener("turbo:load", formatJson);
+document.addEventListener("ready turbo:load", formatJson);
 
 // turn on bootstrap 5 tooltips
 function enableTooltips() {
