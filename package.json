@@ -4,7 +4,7 @@
   "scripts": {
     "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds --public-path=assets",
     "build:css": "sass ./app/assets/stylesheets/application.bootstrap.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules",
-    "heroku-prebuild": "echo This runs before Heroku installs dependencies."
+    "heroku-prebuild": "npm install -g esbuild sass"
   },
   "dependencies": {
     "@hotwired/turbo-rails": "^7.1.3",
