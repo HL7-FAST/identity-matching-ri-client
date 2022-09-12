@@ -44,6 +44,12 @@ $ rails server
 
 6. Go to <http://localhost:3000>
 
+## Environment Variables
+ - BEARER_TOKEN
+ - CLIENT_ID
+ - CLIENT_SECRET
+ - IDENTITY_PROVIDER
+
 ## License
 
 Copyright 2022 The MITRE Corporation

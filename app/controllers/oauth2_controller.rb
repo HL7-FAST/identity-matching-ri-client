@@ -30,11 +30,14 @@ class Oauth2Controller < ApplicationController
   # POST /oauth2/register
   # preform client registration as specified in security spec
   def register
+    @identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
+
     rsa_private_key = OpenSSL::PKey::RSA.generate 2048
     rsa_public_key = rsa_private_key.public_key
 
 	payload = {
 		iss: "#{root_url}",
+        idp: @identity_provider,
 		sub: "client_id?", # TODO
 		aud: @patient_server.join('oauth','register'), # TODO: fetch from capability statement
 		#exp: (now + 4.5).to_i, # TODO
@@ -71,7 +74,8 @@ class Oauth2Controller < ApplicationController
   # GET /oauth2/restart
   # initiate actual oauth2 protocol - authorization code flow
   def restart
-	options = @client.get_oauth2_metadata_from_conformance
+    @identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
+	options = @fhir_client.get_oauth2_metadata_from_conformance
 
 	if options.blank?
 		options[:authorize_url] = @patient_server.join('oauth','authorize')
@@ -88,7 +92,8 @@ class Oauth2Controller < ApplicationController
         :client_id => ENV["CLIENT_ID"],
         :redirect_uri => oauth2_redirect_url,
         :state => session[:state],
-        :aud => @patient_server.base
+        :aud => @patient_server.base,
+        :idp => @identity_provider
     }
 
     @authorize_url = options[:authorize_url] + "?" + @auth_params.to_query
@@ -146,8 +151,8 @@ class Oauth2Controller < ApplicationController
         session[:access_token] = @token
         flash.now.notice = "Obtained access token!"
 
-        @client = FHIR::Client.new(@patient_server.base)
-        @client.set_bearer_token(@token)
+        @fhir_client = FHIR::Client.new(@patient_server.base)
+        @fhir_client.set_bearer_token(@token)
     else
 		Rails.logger.error "oauth2/redirect/ endpoint triggered but missing code parameter"
         flash.now.alert = "oauth2/redirect/ endpoint triggered without code parameter, params: #{params}"
@@ -160,7 +165,7 @@ class Oauth2Controller < ApplicationController
   private
 
   def set_client
-	@client = FHIR::Client.new(@patient_server.base)
+	@fhir_client = FHIR::Client.new(@patient_server.base)
 	yield
   end
 
