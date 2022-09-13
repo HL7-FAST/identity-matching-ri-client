@@ -112,9 +112,9 @@ class IdentityMatching < ApplicationRecord
 	else
 		fhir_json = IDI_BASE_PARAMETER.result_with_hash({model: self})
 	end
-    
-	self.request_fhir = FHIR.from_contents(fhir_json)
-	self.request_fhir.valid? && self.save
+    self.request_json = fhir_json
+	#self.request_fhir = FHIR.from_contents(fhir_json)
+	#self.request_fhir.valid? && self.save
   end
 
   # TODO: use l0 or l1 profiles

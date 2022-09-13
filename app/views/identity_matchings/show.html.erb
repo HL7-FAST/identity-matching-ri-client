@@ -15,12 +15,12 @@
 </div>
 
 <h3>FHIR Request</h3>
-<code class="fhir" style="min-width:100vw;"><%= @identity_matching.request_fhir.to_json %></code>
+<code class="fhir" style="min-width:100vw;"><%= @identity_matching.request_json %></code>
 <hr />
 
 <h3>FHIR Response</h3>
 <% if @identity_matching.response_json %>
-  <code class="fhir" style="min-width:100vw;"><%= @identity_matching.response_fhir.to_json %></code>
+  <code class="fhir" style="min-width:100vw;"><%= @identity_matching.response_json %></code>
 <% elsif @identity_matching.errors.any? %>
   <%= render "errors", identity_matching: @identity_matching %>
 <% else %>
