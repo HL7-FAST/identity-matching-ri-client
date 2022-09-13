@@ -13,8 +13,7 @@ class IdentityMatching < ApplicationRecord
   has_one_attached :photo
 
   # Validations
-  validates :full_name, presence: true
-  validates :date_of_birth, presence: true
+  #validates :full_name, presence: true # only for IDI L1
   #validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }
   #validates :mobile, format: { with: /A(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\z/ }
   validates_with WeightValidator
@@ -85,7 +84,7 @@ class IdentityMatching < ApplicationRecord
 
   # return true if any hard identifier is provided
   def identifiers?
-	return self.drivers_license || self.national_insurance_payor_identifier || self.state_id_number || self.passport_number
+    return [:drivers_license, :national_insurance_payor_identifier, :state_id_number, :passport_number].any? { |x| self.has? x }
   end
 
   # returns array of hashes that is convenient for templating fhir identifiers
@@ -112,9 +111,11 @@ class IdentityMatching < ApplicationRecord
 		fhir_json = IDI_L1_PARAMETER.result_with_hash({model: self})
 	else
 		fhir_json = IDI_BASE_PARAMETER.result_with_hash({model: self})
+        puts fhir_json
 	end
-	self.request_fhir = FHIR.from_contents(fhir_json)
-	self.request_fhir.valid? && self.save
+    self.request_json = fhir_json
+	#self.request_fhir = FHIR.from_contents(fhir_json)
+	#self.request_fhir.valid? && self.save
   end
 
   # TODO: use l0 or l1 profiles
