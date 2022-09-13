@@ -92,15 +92,15 @@
         ],
         <% end %>
 
-		<% if model.gender %>
+		<% if model.has? :gender %>
 		"gender": "<%= model.gender %>",
 		<% end %>
 
-		<% if model.language %>
-		"language": "<%= model.language %>",
-		<% end %>
+        <% if model.has? :date_of_birth %>
+        "birthDate": "<%= model.date_of_birth %>",
+        <% end %>
 
-        "birthDate": "<%= model.date_of_birth %>"
+		"language": "<%= model.language %>"
       }
     },
     {
