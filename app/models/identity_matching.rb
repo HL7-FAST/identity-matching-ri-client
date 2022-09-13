@@ -111,6 +111,7 @@ class IdentityMatching < ApplicationRecord
 		fhir_json = IDI_L1_PARAMETER.result_with_hash({model: self})
 	else
 		fhir_json = IDI_BASE_PARAMETER.result_with_hash({model: self})
+        puts fhir_json
 	end
     self.request_json = fhir_json
 	#self.request_fhir = FHIR.from_contents(fhir_json)
