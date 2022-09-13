@@ -13,7 +13,7 @@ class IdentityMatching < ApplicationRecord
   has_one_attached :photo
 
   # Validations
-  validates :full_name, presence: true
+  #validates :full_name, presence: true # only for IDI L1
   #validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }
   #validates :mobile, format: { with: /A(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\z/ }
   validates_with WeightValidator
@@ -84,7 +84,7 @@ class IdentityMatching < ApplicationRecord
 
   # return true if any hard identifier is provided
   def identifiers?
-	return self.drivers_license || self.national_insurance_payor_identifier || self.state_id_number || self.passport_number
+    return [:drivers_license, :national_insurance_payor_identifier, :state_id_number, :passport_number].any? { |x| self.has? x }
   end
 
   # returns array of hashes that is convenient for templating fhir identifiers

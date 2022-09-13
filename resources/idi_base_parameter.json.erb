@@ -41,7 +41,7 @@
             "given": <%= model.given_names %>
           }
         ],
-        <% else %>
+        <% elsif model.has? :last_name %>
         "name": [
           {
             "family": "<%= model.last_name %>"
@@ -49,7 +49,7 @@
         ],
 		<% end %>
 
-		<% if model.mobile %>
+		<% if model.has? :mobile %>
 		"telecom": [ {
 			"system": "phone",
 			"value": "<%= model.mobile %>",
@@ -102,10 +102,6 @@
 
 		"language": "<%= model.language %>"
       }
-    },
-    {
-      "name": "onlyCertainMatches",
-      "valueBoolean": "true" <%# TODO: make optional %>
     }
   ]
 }
