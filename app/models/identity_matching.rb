@@ -14,7 +14,6 @@ class IdentityMatching < ApplicationRecord
 
   # Validations
   validates :full_name, presence: true
-  validates :date_of_birth, presence: true
   #validates :email, format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i }
   #validates :mobile, format: { with: /A(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\z/ }
   validates_with WeightValidator
@@ -113,6 +112,7 @@ class IdentityMatching < ApplicationRecord
 	else
 		fhir_json = IDI_BASE_PARAMETER.result_with_hash({model: self})
 	end
+    
 	self.request_fhir = FHIR.from_contents(fhir_json)
 	self.request_fhir.valid? && self.save
   end
