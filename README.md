@@ -4,7 +4,7 @@ Reference implementation (RI) client for [Interoperable Identity and Patient Mat
 ## Dependencies
  - [Ruby 3.1.2](https://www.ruby-lang.org/en/)
  - [Ruby Bundler](https://bundler.io)
- - [SQLite](https://www.sqlite.org/index.html)
+ - [Postgresql](https://www.postgresql.org/)
  - [Sass](https://sass-lang.com/)
  - [Yarn](https://yarnpkg.com/)
  - [ESBuild](https://esbuild.github.io/)
@@ -18,6 +18,7 @@ $ bundle install
 
 2. Setup database
 ```bash
+$ rails db:create
 $ rails db:migrate
 ```
 

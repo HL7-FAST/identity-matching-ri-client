@@ -3,7 +3,8 @@
   "private": "true",
   "scripts": {
     "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds --public-path=assets",
-    "build:css": "sass ./app/assets/stylesheets/application.bootstrap.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules"
+    "build:css": "sass ./app/assets/stylesheets/application.bootstrap.scss:./app/assets/builds/application.css --no-source-map --load-path=node_modules",
+    "heroku-prebuild": "npm install -g esbuild sass"
   },
   "dependencies": {
     "@hotwired/turbo-rails": "^7.1.3",
@@ -11,5 +12,8 @@
     "@rails/ujs": "^7.0.3-1",
     "bootstrap": "5.2.0-beta1",
     "bootstrap-icons": "^1.8.3"
+  },
+  "engines": {
+    "yarn": "1.x"
   }
 }

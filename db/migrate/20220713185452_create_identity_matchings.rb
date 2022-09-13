@@ -1,4 +1,4 @@
-class CreateIdentityMatchingRequests < ActiveRecord::Migration[7.0]
+class CreateIdentityMatchings < ActiveRecord::Migration[7.0]
   def change
     create_table :identity_matchings do |t|
       t.string :full_name
