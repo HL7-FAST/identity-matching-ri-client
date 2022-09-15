@@ -16,5 +16,6 @@ Rails.application.routes.draw do
 
   get 'udap/start'
   get 'udap/register'
+  get 'udap/redirect'
 
 end
