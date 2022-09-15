@@ -57,7 +57,7 @@ class UDAPController < ApplicationController
     # TODO: use an uploaded cert instead of self signed
     root_cert = self_signed_x509_cert()
 
-    private_key = OpenSSL::PKey::RSA.new(2048)
+    private_key = OpenSSL::PKey::RSA.new(2048) # TODO: save private key?
     public_key = private_key.public_key
     cert = OpenSSL::X509::Certificate.new
     cert.version = 2
@@ -67,13 +67,14 @@ class UDAPController < ApplicationController
     cert.issuer = root_cert.subject
     cert.not_before = now
     cert.not_after = now + 60 * 60 * 24 * 365 # exp in 1 year
-    cert.sign(software_statement.to_json, OpenSSL::Digest::SHA256.new) # FIXME
+    cert.sign(private_key, OpenSSL::Digest::SHA256.new)
+    # TODO: cert extensions
 
     cert_chain = [ Base64.encode64(cert.to_der), Base64.encode64(root_cert.to_der) ]
-    @jwt = JWT.encode(software_statement, private_key, 'RS256', header_fields = {'x5c' => cert_chain})
+    @jwt = JWT.encode(software_statement, private_key, 'RS256', header_fields = {'x5c' => cert_chain}) # signed!
 
     response = RestClient.post( @udap_metadata['registration_endpoint'], payload = {
-                                                                        'software_statement' => software_statement, # TODO: JWS compact serialization of var
+                                                                        'software_statement' => @jwt,
                                                                         # 'certifications' => [], # optional
                                                                         'udap' => '1'
                                                                         } );
@@ -81,6 +82,8 @@ class UDAPController < ApplicationController
     puts "================="
     puts response.body
     puts "================="
+    # FIXME: udap authorization server times out?
+    # TODO: check for and save client id
 
     redirect_to root_url, notice: "Client registration success" # TODO: better ending
   end
