@@ -1,5 +1,7 @@
 class UDAPController < ApplicationController
 
+  before_action :set_patient_server
+
   # GET /udap/start
   # follows PatientServerController#create to reset HTTP headers
   def start

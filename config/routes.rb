@@ -9,10 +9,12 @@ Rails.application.routes.draw do
   get 'identity_matchings/example'
   resources :identity_matchings
 
-  get 'udap/register'
   get 'oauth2/start'
   get 'oauth2/restart'
   get 'oauth2/redirect'
   #post 'oauth2/register'
+
+  get 'udap/start'
+  get 'udap/register'
 
 end
