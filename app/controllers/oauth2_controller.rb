@@ -28,7 +28,7 @@ class Oauth2Controller < ApplicationController
   end
 
   # POST /oauth2/register
-  # preform client registration as specified in security spec
+  ## IGNORE THIS ACTION!!
   def register
     @identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
 

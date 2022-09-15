@@ -13,6 +13,6 @@ Rails.application.routes.draw do
   get 'oauth2/start'
   get 'oauth2/restart'
   get 'oauth2/redirect'
-  post 'oauth2/register'
+  #post 'oauth2/register'
 
 end
