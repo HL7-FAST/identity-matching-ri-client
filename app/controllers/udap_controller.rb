@@ -40,15 +40,15 @@ class UDAPController < ApplicationController
     # I guess client app could check x5c to verify a CA, but this is not in the spec for client
 
     software_statement = {
-        'iss' => 'http://localhost:3000', # TODO: fetch dynamically
-        'sub' => 'http://localhost:3000',
+        'iss' => root_url,
+        'sub' => root_url,
         'aud' => @udap_metadata['authorization_endpoint'],
         'iat' => (now = Time.now).to_i,
         'exp' => (now + 5 * 60).to_i, # exp in 5 mins
         'jti' => Random.rand(10**6),
-        'client_name' => 'trying udap', # TODO: better name or recv as input
+        'client_name' => 'Identity Matching RI Client', # TODO: better name or recv as input
         'redirect_uris' => [ udap_redirect_url ],
-        'grant_types' => ['authorization_code'],
+        'grant_types' => ['authorization_code'], # TODO: blank array option will allow for cancelled registration
         'response_types' => ['code'],
         'token_endpoint_auth_method' => 'private_key_jwt',
         'scope' => 'udap */*' # TODO: get scope from input?
@@ -73,19 +73,50 @@ class UDAPController < ApplicationController
     cert_chain = [ Base64.encode64(cert.to_der), Base64.encode64(root_cert.to_der) ]
     @jwt = JWT.encode(software_statement, private_key, 'RS256', header_fields = {'x5c' => cert_chain}) # signed!
 
-    response = RestClient.post( @udap_metadata['registration_endpoint'], payload = {
-                                                                        'software_statement' => @jwt,
-                                                                        # 'certifications' => [], # optional
-                                                                        'udap' => '1'
-                                                                        } );
+    Rails.logger.debug "==== Signed Software Statement ==="
+    Rails.logger.debug @jwt
+    Rails.logger.debug "=================================="
 
-    puts "================="
-    puts response.body
-    puts "================="
+    begin
+        response = RestClient.post( @udap_metadata['registration_endpoint'], payload = {
+                                                                                'software_statement' => @jwt,
+                                                                                # 'certifications' => [], # optional
+                                                                                'udap' => '1'
+                                                                            } );
+    rescue RestClient::ExceptionWithResponse => e
+        unless e.response&.code == 400 # proper udap error response - handled below
+            redirect_to(root_url, alert: "Client registration failed: #{e}") and return
+        end
+    end
+
+    Rails.logger.debug "================="
+    Rails.logger.debug response.body
+    Rails.logger.debug "================="
     # FIXME: udap authorization server times out?
-    # TODO: check for and save client id
 
-    redirect_to root_url, notice: "Client registration success" # TODO: better ending
+    begin
+        registration = JSON.parse(response.body)
+    rescue Exception => e
+        redirect_to(root_url, alert: "UDAP server returned invalid JSON: #{response.body}") and return
+    end
+
+    if registration['error'] && registration['error_description'] # highly conformant error
+        flash.alert = "UDAP registration failed - error: #{registration['error']} - description: #{registration['error_description']}"
+    elsif registration['error'] # conformant error
+        flash.alert = "UDAP registration failed - error: #{registration['error']}"
+    elsif registration['client_id'] # success
+        if response.code != 201     # nonconformant success
+            Rails.logger.warn "UDAP Registration seems to have succeeded but response was #{response.code}, expected 201"
+            flash.alert = "Warning: Registration success but response code should be 201 but client received #{response.code}"
+        end
+        @client_id = registration['client_id']
+        ENV['client_id'] = @client_id
+        flash.notice = "Client registration success (client_id set to: #{@client_id})"
+    else  # nonconformant
+        flash.alert = "UDAP registration response missing JSON keys - expected 'client_id' or 'error'"
+    end
+
+    redirect_to root_url
   end
 
   # GET /udap/redirect
