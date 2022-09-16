@@ -11,6 +11,9 @@
                 <li class="list-group-item list-group-item-action">Identity Provider: <%= @identity_provider %></li>
             </ul>
 
+            <h3>This is the root CA (PEM) used by this client, make sure it is among server's trusted certs</h3>
+            <p><code><%= @trusted_cert_pem %></code></p>
+
             <div class="mt-4">
                 <%= link_to "Go Back", :back, class: "btn btn-secondary" %>
                 <%= link_to "Register with UDAP Dynamic Client Registration", udap_register_url, class: "btn btn-dark" %>
