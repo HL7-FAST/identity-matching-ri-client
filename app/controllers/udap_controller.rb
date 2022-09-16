@@ -70,7 +70,7 @@ class UDAPController < ApplicationController
     cert.sign(private_key, OpenSSL::Digest::SHA256.new)
     # TODO: cert extensions
 
-    cert_chain = [ Base64.encode64(cert.to_der), Base64.encode64(root_cert.to_der) ]
+    cert_chain = [ cert.to_pem, root_cert.to_pem ]
     @jwt = JWT.encode(software_statement, private_key, 'RS256', header_fields = {'x5c' => cert_chain}) # signed!
 
     Rails.logger.debug "==== Signed Software Statement ==="
@@ -78,11 +78,13 @@ class UDAPController < ApplicationController
     Rails.logger.debug "=================================="
 
     begin
-        response = RestClient.post( @udap_metadata['registration_endpoint'], payload = {
-                                                                                'software_statement' => @jwt,
-                                                                                # 'certifications' => [], # optional
-                                                                                'udap' => '1'
-                                                                            } );
+        response = RestClient.post( @udap_metadata['registration_endpoint'],
+                                    {
+                                        'software_statement' => @jwt,
+                                        # 'certifications' => [], # optional
+                                        'udap' => '1'
+                                    }
+                                  );
     rescue RestClient::ExceptionWithResponse => e
         unless e.response&.code == 400 # proper udap error response - handled below
             redirect_to(root_url, alert: "Client registration failed: #{e}") and return
