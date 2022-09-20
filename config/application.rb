@@ -29,8 +29,10 @@ module IdentityMatchingRiClient
     # in config/environments, which are processed later.
     #
     # config.time_zone = "Central Time (US & Canada)"
-    config.eager_load_paths << Rails.root.join("lib")
 	# config.action_dispatch.default_headers
+
+    config.eager_load_paths << Rails.root.join("config")
+    config.eager_load_paths << Rails.root.join("lib")
 
   end
 end
