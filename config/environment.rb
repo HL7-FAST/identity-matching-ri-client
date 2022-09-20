@@ -2,7 +2,7 @@
 require_relative "application"
 
 # Debug Zeitwerk
-Rails.autoloaders.log!
+# Rails.autoloaders.log!
 
 # Initialize the Rails application.
 Rails.application.initialize!
