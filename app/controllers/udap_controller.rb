@@ -31,8 +31,8 @@ class UDAPController < ApplicationController
   # Runs UDAP dynamic client registration on patient server
   def register
     begin
-        response = RestClient.get(@patient_server.join('.well-known', 'udap'))
-        @udap_metadata = JSON.parse(response.body)
+        x = RestClient.get(@patient_server.join('.well-known', 'udap'))
+        @udap_metadata = JSON.parse(x.body)
     rescue Exception => e
         redirect_to udap_start_path and return
     end
@@ -79,7 +79,7 @@ class UDAPController < ApplicationController
     Rails.logger.debug "=================================="
 
     begin
-        response = RestClient.post( @udap_metadata['registration_endpoint'],
+        y = RestClient.post( @udap_metadata['registration_endpoint'],
                                     {
                                         'software_statement' => @jwt,
                                         # 'certifications' => [], # optional
@@ -93,14 +93,14 @@ class UDAPController < ApplicationController
     end
 
     Rails.logger.debug "================="
-    Rails.logger.debug response.body
+    Rails.logger.debug y.body
     Rails.logger.debug "================="
     # FIXME: udap authorization server times out?
 
     begin
-        registration = JSON.parse(response.body)
+        registration = JSON.parse(y.body)
     rescue Exception => e
-        redirect_to(root_url, alert: "UDAP server returned invalid JSON: #{response.body}") and return
+        redirect_to(root_url, alert: "UDAP server returned invalid JSON: #{y.body}") and return
     end
 
     if registration['error'] && registration['error_description'] # highly conformant error
@@ -108,9 +108,9 @@ class UDAPController < ApplicationController
     elsif registration['error'] # conformant error
         flash.alert = "UDAP registration failed - error: #{registration['error']}"
     elsif registration['client_id'] # success
-        if response.code != 201     # nonconformant success
-            Rails.logger.warn "UDAP Registration seems to have succeeded but response was #{response.code}, expected 201"
-            flash.alert = "Warning: Registration success but response code should be 201 but client received #{response.code}"
+        if y.code != 201     # nonconformant success
+            Rails.logger.warn "UDAP Registration seems to have succeeded but response was #{y.code}, expected 201"
+            flash.alert = "Warning: Registration success but response code should be 201 but client received #{y.code}"
         end
         @client_id = registration['client_id']
         ENV['client_id'] = @client_id
