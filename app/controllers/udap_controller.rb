@@ -80,11 +80,12 @@ class UDAPController < ApplicationController
 
     begin
         bsponse = RestClient.post( @udap_metadata['registration_endpoint'],
-                                    {
-                                        'software_statement' => @jwt,
-                                        # 'certifications' => [], # optional
-                                        'udap' => '1'
-                                    }
+                                   {
+                                       'software_statement' => @jwt,
+                                       # 'certifications' => [], # optional
+                                       'udap' => '1'
+                                   },
+                                   { 'Content-Type' => 'application/json' }
                                   );
     rescue RestClient::ExceptionWithResponse => e
         bsponse = e.response
