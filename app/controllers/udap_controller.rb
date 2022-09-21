@@ -31,8 +31,8 @@ class UDAPController < ApplicationController
   # Runs UDAP dynamic client registration on patient server
   def register
     begin
-        x = RestClient.get(@patient_server.join('.well-known', 'udap'))
-        @udap_metadata = JSON.parse(x.body)
+        asponse = RestClient.get(@patient_server.join('.well-known', 'udap'))
+        @udap_metadata = JSON.parse(asponse.body)
     rescue Exception => e
         redirect_to udap_start_path and return
     end
@@ -79,7 +79,7 @@ class UDAPController < ApplicationController
     Rails.logger.debug "=================================="
 
     begin
-        y = RestClient.post( @udap_metadata['registration_endpoint'],
+        bsponse = RestClient.post( @udap_metadata['registration_endpoint'],
                                     {
                                         'software_statement' => @jwt,
                                         # 'certifications' => [], # optional
@@ -87,20 +87,21 @@ class UDAPController < ApplicationController
                                     }
                                   );
     rescue RestClient::ExceptionWithResponse => e
+        bsponse = e.response
         unless e.response&.code == 400 # proper udap error response - handled below
             redirect_to(root_url, alert: "Client registration failed: #{e}") and return
         end
     end
 
     Rails.logger.debug "================="
-    Rails.logger.debug y.body
+    Rails.logger.debug bsponse.body
     Rails.logger.debug "================="
     # FIXME: udap authorization server times out?
 
     begin
-        registration = JSON.parse(y.body)
+        registration = JSON.parse(bsponse.body)
     rescue Exception => e
-        redirect_to(root_url, alert: "UDAP server returned invalid JSON: #{y.body}") and return
+        redirect_to(root_url, alert: "UDAP server returned invalid JSON: #{bsponse.body}") and return
     end
 
     if registration['error'] && registration['error_description'] # highly conformant error
@@ -108,9 +109,9 @@ class UDAPController < ApplicationController
     elsif registration['error'] # conformant error
         flash.alert = "UDAP registration failed - error: #{registration['error']}"
     elsif registration['client_id'] # success
-        if y.code != 201     # nonconformant success
-            Rails.logger.warn "UDAP Registration seems to have succeeded but response was #{y.code}, expected 201"
-            flash.alert = "Warning: Registration success but response code should be 201 but client received #{y.code}"
+        if bsponse.code != 201     # nonconformant success
+            Rails.logger.warn "UDAP Registration seems to have succeeded but response was #{bsponse.code}, expected 201"
+            flash.alert = "Warning: Registration success but response code should be 201 but client received #{bsponse.code}"
         end
         @client_id = registration['client_id']
         ENV['client_id'] = @client_id
