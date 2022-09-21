@@ -84,7 +84,7 @@ class UDAPController < ApplicationController
                                        'software_statement' => @jwt,
                                        # 'certifications' => [], # optional
                                        'udap' => '1'
-                                   },
+                                   }.to_json,
                                    { 'Content-Type' => 'application/json' }
                                   );
     rescue RestClient::ExceptionWithResponse => e
