@@ -116,7 +116,7 @@ class UDAPController < ApplicationController
         ENV['client_id'] = @client_id
         flash.notice = "Client registration success (client_id set to: #{@client_id})"
     else  # nonconformant
-        flash.alert = "UDAP registration response missing JSON keys - expected 'client_id' or 'error'"
+        flash.alert = "UDAP registration response missing JSON keys - expected 'client_id' or 'error', got: #{registration}"
     end
 
     redirect_to root_url
