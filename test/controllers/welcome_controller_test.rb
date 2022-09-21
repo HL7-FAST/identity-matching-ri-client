@@ -5,4 +5,20 @@ class WelcomeControllerTest < ActionDispatch::IntegrationTest
     get welcome_index_url
     assert_response :success
   end
+
+  test "should get terms" do
+    get welcome_terms_url
+    assert_response :success
+  end
+
+  test "should get privacy" do
+    get welcome_privacy_url
+    assert_response :success
+  end
+
+  test "should get cookies" do
+    get welcome_privacy_url + '#cookies'
+    assert_response :success
+  end
+
 end

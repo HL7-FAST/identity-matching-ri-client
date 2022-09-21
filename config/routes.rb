@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   root 'welcome#index'
   get 'welcome/index'
+  get 'welcome/terms'
+  get 'welcome/privacy'
   get 'index', {controller: :welcome_controller, action: :index}
 
   get 'patient_server', {controller: :patient_server, action: :show}

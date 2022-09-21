@@ -3,6 +3,7 @@
   <head>
     <title>Identity Matching Client</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -38,7 +39,12 @@
 
     <footer class="container-fluid mt-3 text-center">
 	  <hr />
-	  &copy; MITRE 2022
+	  &copy; MITRE 2022 |
+      FHIR&reg; is a registered trademark of HL7&reg; |
+      <%= link_to "Index", root_url %> |
+      <%= link_to "Terms", welcome_terms_url %> |
+      <%= link_to "Privacy", welcome_privacy_url %> |
+      <%= link_to "Cookies", welcome_privacy_url + '#cookies' %>
     </footer>
   </body>
 </html>
