@@ -71,7 +71,7 @@ class UDAPController < ApplicationController
     cert.sign(private_key, OpenSSL::Digest::SHA256.new)
     # TODO: cert extensions
 
-    cert_chain = [ cert.to_pem, root_cert.to_pem ]
+    cert_chain = [ Base64.encode64(cert.to_der), Base64.encode64(root_cert.to_der) ]
     @jwt = JWT.encode(software_statement, private_key, 'RS256', header_fields = {'x5c' => cert_chain}) # signed!
 
     Rails.logger.debug "==== Signed Software Statement ==="
