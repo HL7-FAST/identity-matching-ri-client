@@ -63,7 +63,7 @@ class UDAPController < ApplicationController
     cert = OpenSSL::X509::Certificate.new
     cert.version = 2
     cert.serial = Random.rand(100)
-    cert.subject = OpenSSL::X509::Name.parse "/DC=https://fhir-secid-client.herokuapp.com/CN=Identity Matching RI Client/O=MITRE/C=US"
+    cert.subject = OpenSSL::X509::Name.parse("/CN=Identity Matching RI Client/O=MITRE/C=US")
     cert.public_key = public_key
     cert.issuer = root_cert.subject
     cert.not_before = now
