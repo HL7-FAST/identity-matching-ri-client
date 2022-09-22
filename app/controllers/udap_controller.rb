@@ -71,7 +71,7 @@ class UDAPController < ApplicationController
     cert.sign(private_key, OpenSSL::Digest::SHA256.new)
     ef = OpenSSL::X509::ExtensionFactory.new
     ef.subject_certificate = cert
-    ef.issuer_certificate = root_ca
+    ef.issuer_certificate = root_cert
     cert.add_extension(ef.create_extension("keyUsage","digitalSignature", true))
     cert.add_extension(ef.create_extension("subjectKeyIdentifier","hash",false))
     cert.add_extension(ef.create_extension("subjectAlternativeName", "Identity Matching RI Client", true))
