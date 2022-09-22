@@ -43,11 +43,11 @@ class UDAPController < ApplicationController
     software_statement = {
         'iss' => root_url,
         'sub' => root_url,
-        'aud' => @udap_metadata['authorization_endpoint'],
+        'aud' => @udap_metadata['registration_endpoint'],
         'iat' => (now = Time.now).to_i,
         'exp' => (now + 5 * 60).to_i, # exp in 5 mins
         'jti' => Random.rand(10**6),
-        'client_name' => 'Identity Matching RI Client', # TODO: better name or recv as input
+        'client_name' => 'Identity Matching RI Client',
         'redirect_uris' => [ udap_redirect_url ],
         'grant_types' => ['authorization_code'], # TODO: blank array option will allow for cancelled registration
         'response_types' => ['code'],
@@ -69,14 +69,19 @@ class UDAPController < ApplicationController
     cert.not_before = now
     cert.not_after = now + 60 * 60 * 24 * 365 # exp in 1 year
     cert.sign(private_key, OpenSSL::Digest::SHA256.new)
-    # TODO: cert extensions
+    ef = OpenSSL::X509::ExtensionFactory.new
+    ef.subject_certificate = cert
+    ef.issuer_certificate = root_ca
+    cert.add_extension(ef.create_extension("keyUsage","digitalSignature", true))
+    cert.add_extension(ef.create_extension("subjectKeyIdentifier","hash",false))
+    cert.add_extension(ef.create_extension("subjectAlternativeName", "Identity Matching RI Client", true))
 
     cert_chain = [ Base64.encode64(cert.to_der), Base64.encode64(root_cert.to_der) ]
     @jwt = JWT.encode(software_statement, private_key, 'RS256', header_fields = {'x5c' => cert_chain}) # signed!
 
-    Rails.logger.debug "==== Signed Software Statement ==="
+    Rails.logger.debug "==== Signed Software Statement ===="
     Rails.logger.debug @jwt
-    Rails.logger.debug "=================================="
+    Rails.logger.debug "==================================="
 
     begin
         bsponse = RestClient.post( @udap_metadata['registration_endpoint'],
@@ -94,9 +99,9 @@ class UDAPController < ApplicationController
         end
     end
 
-    Rails.logger.debug "================="
+    Rails.logger.debug "====== Registration Response ======="
     Rails.logger.debug bsponse.body
-    Rails.logger.debug "================="
+    Rails.logger.debug "===================================="
     # FIXME: udap authorization server times out?
 
     begin
