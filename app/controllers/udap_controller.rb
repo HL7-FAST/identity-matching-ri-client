@@ -74,7 +74,7 @@ class UDAPController < ApplicationController
     ef.issuer_certificate = root_cert
     cert.add_extension(ef.create_extension("keyUsage","digitalSignature", true))
     cert.add_extension(ef.create_extension("subjectKeyIdentifier","hash",false))
-    cert.add_extension(ef.create_extension("subjectAlternativeName", "Identity Matching RI Client", true))
+    cert.add_extension(ef.create_extension("subjectAltName", "DNS:https://fhir-secid-client.herokuapp.com"))
 
     cert_chain = [ Base64.encode64(cert.to_der), Base64.encode64(root_cert.to_der) ]
     @jwt = JWT.encode(software_statement, private_key, 'RS256', header_fields = {'x5c' => cert_chain}) # signed!
