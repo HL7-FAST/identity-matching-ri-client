@@ -46,7 +46,7 @@ class UDAPController < ApplicationController
         'aud' => @udap_metadata['registration_endpoint'],
         'iat' => (now = Time.now).to_i,
         'exp' => (now + 5 * 60).to_i, # exp in 5 mins
-        'jti' => Random.rand(10**6),
+        'jti' => SecureRandom.uuid,
         'client_name' => 'Identity Matching RI Client',
         'redirect_uris' => [ udap_redirect_url ],
         'grant_types' => ['authorization_code'], # TODO: blank array option will allow for cancelled registration
@@ -63,7 +63,7 @@ class UDAPController < ApplicationController
     cert = OpenSSL::X509::Certificate.new
     cert.version = 2
     cert.serial = Random.rand(100)
-    cert.subject = OpenSSL::X509::Name.parse "/DC=udap-example/CN=US"
+    cert.subject = OpenSSL::X509::Name.parse "/DC=https://fhir-secid-client.herokuapp.com/CN=Identity Matching RI Client/O=MITRE/C=US"
     cert.public_key = public_key
     cert.issuer = root_cert.subject
     cert.not_before = now
