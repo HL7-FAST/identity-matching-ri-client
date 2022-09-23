@@ -1,13 +1,11 @@
-<p style="color: green"><%= notice %></p>
+<h1>Trusted Certificate Authorities</h1>
 
-<h1>Authorities</h1>
+<p>A proper identity matching or UDAP client must obtain a private key and certificate from an authority. Then UDAP resource servers and patient matching servers
+will allow the clients access if the server providers trust the certificate authority.</p>
 
 <div id="authorities">
   <% @authorities.each do |authority| %>
     <%= render authority %>
-    <p>
-      <%= link_to "Show this authority", authority %>
-    </p>
   <% end %>
 </div>
 

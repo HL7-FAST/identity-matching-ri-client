@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
-  resources :authorities
+
   root 'welcome#index'
+
   get 'welcome/index'
   get 'welcome/terms'
   get 'welcome/privacy'
@@ -20,5 +21,7 @@ Rails.application.routes.draw do
   get 'udap/start'
   get 'udap/register'
   get 'udap/redirect'
+
+  resources :authorities
 
 end

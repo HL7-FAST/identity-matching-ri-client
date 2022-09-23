@@ -1,7 +1,7 @@
 class UDAPController < ApplicationController
 
   before_action :set_patient_server
-  before_action :ensure_root_cert
+  # before_action :ensure_root_cert
 
   # GET /udap/start
   # follows PatientServerController#create to reset HTTP headers

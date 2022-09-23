@@ -13,20 +13,20 @@
 
   <div>
     <%= form.label :name, style: "display: block" %>
-    <%= form.text_field :name %>
+    <%= form.text_field :name, class: "form-control" %>
   </div>
 
   <div>
-    <%= form.label :certificate, style: "display: block" %>
-    <%= form.file_field :certificate %>
+    <%= form.label "Upload Certificate *.pem file", style: "display: block" %>
+    <%= form.file_field :certificate, class: "form-control" %>
   </div>
 
   <div>
-    <%= form.label :private_key, style: "display: block" %>
-    <%= form.file_field :private_key %>
+    <%= form.label "Upload corresponding private key *.p12 file", style: "display: block" %>
+    <%= form.file_field :private_key, class: "form-control" %>
   </div>
 
   <div>
-    <%= form.submit %>
+    <%= form.submit class: "btn btn-primary" %>
   </div>
 <% end %>
