@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @authority %>
+
+<div>
+  <%= link_to "Edit this authority", edit_authority_path(@authority) %> |
+  <%= link_to "Back to authorities", authorities_path %>
+
+  <%= button_to "Destroy this authority", @authority, method: :delete %>
+</div>

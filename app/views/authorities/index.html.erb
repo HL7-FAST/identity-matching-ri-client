@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Authorities</h1>
+
+<div id="authorities">
+  <% @authorities.each do |authority| %>
+    <%= render authority %>
+    <p>
+      <%= link_to "Show this authority", authority %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New authority", new_authority_path %>

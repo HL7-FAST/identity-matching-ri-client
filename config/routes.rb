@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :authorities
   root 'welcome#index'
   get 'welcome/index'
   get 'welcome/terms'

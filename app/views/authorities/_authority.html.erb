@@ -1,0 +1,17 @@
+<div id="<%= dom_id authority %>">
+  <p>
+    <strong>Name:</strong>
+    <%= authority.name %>
+  </p>
+
+  <p>
+    <strong>Certificate:</strong>
+    <%= link_to authority.certificate.filename, authority.certificate if authority.certificate.attached? %>
+  </p>
+
+  <p>
+    <strong>Private key:</strong>
+    <%= link_to authority.private_key.filename, authority.private_key if authority.private_key.attached? %>
+  </p>
+
+</div>
