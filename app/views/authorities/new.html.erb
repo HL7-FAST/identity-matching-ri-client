@@ -1,9 +1,15 @@
 <h1>New authority</h1>
 
+<p class="lead">
+Adding a new authority includes their private key and <a href="https://datatracker.ietf.org/doc/html/rfc5280">X509 Certificate</a>,&nbsp;
+which allows the client to assert signed software statements that servers can trust based on the certificate.
+</p>
+
 <%= render "form", authority: @authority %>
 
 <br>
 
 <div>
-  <%= link_to "Back", :back %>
+  <%= link_to "Back", :back %> |
+  <%= link_to "View all authorities", authorities_url %>
 </div>

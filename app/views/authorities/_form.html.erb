@@ -18,12 +18,12 @@
 
   <div>
     <%= form.label "Upload Certificate *.pem file", style: "display: block" %>
-    <%= form.file_field :certificate, class: "form-control" %>
+    <%= form.file_field :certificate, class: "form-control", placeholder: (authority.persisted? ? "Replace" : "New") + " *.pem certificate file" %>
   </div>
 
   <div>
     <%= form.label "Upload corresponding private key *.p12 file", style: "display: block" %>
-    <%= form.file_field :private_key, class: "form-control" %>
+    <%= form.file_field :private_key, class: "form-control", placeholder: (authority.persisted? ? "Replace" : "New") + " *.pem RSA private key file" %>
   </div>
 
   <div>

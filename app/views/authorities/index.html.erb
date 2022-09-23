@@ -3,10 +3,22 @@
 <p>A proper identity matching or UDAP client must obtain a private key and certificate from an authority. Then UDAP resource servers and patient matching servers
 will allow the clients access if the server providers trust the certificate authority.</p>
 
-<div id="authorities">
+<table id="authorities" class="table">
+  <tr>
+    <th>Name</th>
+    <th>Created</th>
+    <th>Certificate</th>
+    <th colspan="2">Actions</th>
+  </tr>
   <% @authorities.each do |authority| %>
-    <%= render authority %>
+  <tr>
+    <td><%= authority.name %></td>
+    <td><%= authority.created_at.strftime '%r %x' %></td>
+    <td><%= link_to "Download PEM", authority, download: authority.name.parameterize + ".pem" %></td>
+    <td><%= link_to "Edit", edit_authority_path(authority), class: "text-success" %></td>
+    <td><%= button_to "Delete", authority, data: {'turbo-method' => :delete}, class: "btn btn-sm btn-danger" %></td>
+  </tr>
   <% end %>
-</div>
+</table>
 
-<%= link_to "New authority", new_authority_path %>
+<%= link_to "New authority", new_authority_path, class: "btn btn-primary" %>
