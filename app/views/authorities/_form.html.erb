@@ -17,13 +17,13 @@
   </div>
 
   <div>
-    <%= form.label "Upload Certificate *.pem file", style: "display: block" %>
-    <%= form.file_field :certificate, class: "form-control", placeholder: (authority.persisted? ? "Replace" : "New") + " *.pem certificate file" %>
+    <%= form.label "Upload *.p12 file, which bundles RSA private key, public key, and certificate chain of trust", style: "display: block" %>
+    <%= form.file_field :certificate, class: "form-control", placeholder: "*.p12 file" %>
   </div>
 
   <div>
-    <%= form.label "Upload corresponding private key *.p12 file", style: "display: block" %>
-    <%= form.file_field :private_key, class: "form-control", placeholder: (authority.persisted? ? "Replace" : "New") + " *.pem RSA private key file" %>
+    <%= form.label "Passphrase if your *.p12 file is passphrase protected", style: "display: block" %>
+    <%= form.password_field :password, class: "form-control", placeholder: "Passphrase" %>
   </div>
 
   <div>

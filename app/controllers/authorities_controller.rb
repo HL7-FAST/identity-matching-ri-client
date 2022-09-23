@@ -22,7 +22,17 @@ class AuthoritiesController < ApplicationController
 
   # POST /authorities or /authorities.json
   def create
-    @authority = Authority.new(authority_params)
+    @authority = Authority.new(authority_params.slice(:name))
+    begin
+        pkcs12 = OpenSSL::PKCS12.new( authority_params[:pkcs12].read, authority_params[:password] )
+        @authority.private_key = pkcs12.private_key
+        @authority.certificate = pkcs12.certificate
+        # TODO: certificate sanity checks
+        # TODO: handle certificate chain
+        # pkcs12.ca_certs => Array of OpenSSL::X509::Certificate(s)
+    rescue Exception => e
+        redirect_to new_authority_url, alert: "Error decoding PKCS#12 file: #{e}"
+    end
 
     respond_to do |format|
       if @authority.save
@@ -66,6 +76,6 @@ class AuthoritiesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def authority_params
-      params.require(:authority).permit(:name, :certificate, :private_key)
+      params.require(:authority).permit(:name, :pkcs12, :password)
     end
 end
