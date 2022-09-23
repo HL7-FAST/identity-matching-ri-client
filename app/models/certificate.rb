@@ -1,5 +1,12 @@
 class Certificate < ApplicationRecord
 
+  belongs_to :authority
+
+  # self join
+  has_many :dependents, class_name: "Certificate", foreign_key: "issuer_id"
+  belongs_to :issuer, class_name: "Certificate", optional: true
+
+  # TODO: remove
   def self.create_self_signed_x509_cert()
     private_key = OpenSSL::PKey::RSA.new(2048)
     public_key = private_key.public_key
@@ -31,6 +38,7 @@ class Certificate < ApplicationRecord
     return self.create({pem: cert.to_pem})
   end
 
+  # TODO: replace with auto serialize?
   # convert to `OpenSSL::X509::Certificate` object
   def to_x509
     OpenSSL::X509::Certificate.new( self.pem )

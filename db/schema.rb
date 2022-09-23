@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_09_23_142749) do
+ActiveRecord::Schema[7.0].define(version: 2022_09_23_200028) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -54,6 +54,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_23_142749) do
     t.text "pem"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "issuer_id"
+    t.bigint "authority_id"
   end
 
   create_table "identity_matchings", force: :cascade do |t|
