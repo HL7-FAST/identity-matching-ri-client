@@ -57,30 +57,28 @@ class UDAPController < ApplicationController
     }
 
     ## Using self-signed cert to build end-entity certificate
-    =begin
-    root_cert = Authority.find_by!({name: "Self-Signed Certificate Authority"})
+    # root_cert = Authority.find_by!({name: "Self-Signed Certificate Authority"})
 
-    private_key = OpenSSL::PKey::RSA.new(2048) # TODO: save private key?
-    public_key = private_key.public_key
-    cert = OpenSSL::X509::Certificate.new
-    cert.version = 2
-    cert.serial = Random.rand(100)
-    cert.subject = OpenSSL::X509::Name.parse("/CN=Identity Matching RI Client/O=MITRE/C=US")
-    cert.public_key = public_key
-    cert.issuer = root_cert.subject
-    cert.not_before = now
-    cert.not_after = now + 60 * 60 * 24 * 365 # exp in 1 year
-    cert.sign(private_key, OpenSSL::Digest::SHA256.new)
-    ef = OpenSSL::X509::ExtensionFactory.new
-    ef.subject_certificate = cert
-    ef.issuer_certificate = root_cert
-    cert.add_extension(ef.create_extension("keyUsage","digitalSignature", true))
-    cert.add_extension(ef.create_extension("subjectKeyIdentifier","hash",false))
-    cert.add_extension(ef.create_extension("subjectAltName", "DNS:https://fhir-secid-client.herokuapp.com"))
+    # private_key = OpenSSL::PKey::RSA.new(2048) # TODO: save private key?
+    # public_key = private_key.public_key
+    # cert = OpenSSL::X509::Certificate.new
+    # cert.version = 2
+    # cert.serial = Random.rand(100)
+    # cert.subject = OpenSSL::X509::Name.parse("/CN=Identity Matching RI Client/O=MITRE/C=US")
+    # cert.public_key = public_key
+    # cert.issuer = root_cert.subject
+    # cert.not_before = now
+    # cert.not_after = now + 60 * 60 * 24 * 365 # exp in 1 year
+    # cert.sign(private_key, OpenSSL::Digest::SHA256.new)
+    # ef = OpenSSL::X509::ExtensionFactory.new
+    # ef.subject_certificate = cert
+    # ef.issuer_certificate = root_cert
+    # cert.add_extension(ef.create_extension("keyUsage","digitalSignature", true))
+    # cert.add_extension(ef.create_extension("subjectKeyIdentifier","hash",false))
+    # cert.add_extension(ef.create_extension("subjectAltName", "DNS:https://fhir-secid-client.herokuapp.com"))
 
-    cert_chain = [ Base64.encode64(cert.to_der), Base64.encode64(root_cert.to_der) ]
-    @jwt = JWT.encode(software_statement, private_key, 'RS256', header_fields = {'x5c' => cert_chain}) # signed!
-    =end
+    # cert_chain = [ Base64.encode64(cert.to_der), Base64.encode64(root_cert.to_der) ]
+    # @jwt = JWT.encode(software_statement, private_key, 'RS256', header_fields = {'x5c' => cert_chain}) # signed!
 
     cert_chain = [ Base64.encode64(@authority.certificate.to_der) ]
     @jwt = JWT.encode(software_statement, @authority.private_key, 'RS256', header_fields = {'x5c' => cert_chain}) # signed!

@@ -31,12 +31,12 @@ class AuthoritiesController < ApplicationController
         # TODO: handle certificate chain
         # pkcs12.ca_certs => Array of OpenSSL::X509::Certificate(s)
     rescue Exception => e
-        redirect_to new_authority_url, alert: "Error decoding PKCS#12 file: #{e}"
+        redirect_to(new_authority_url, {alert: "Error decoding PKCS#12 file: #{e}"}) and return
     end
 
     respond_to do |format|
       if @authority.save
-        format.html { redirect_to udap_start_url, notice: "Authority #{@authority.name} added successfully." }
+        format.html { redirect_to(udap_start_url, {notice: "Authority #{@authority.name} added successfully."}) }
         format.json { render :show, status: :created, location: @authority }
       else
         format.html { render :new, status: :unprocessable_entity }
