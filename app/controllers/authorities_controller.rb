@@ -26,10 +26,9 @@ class AuthoritiesController < ApplicationController
     begin
         pkcs12 = OpenSSL::PKCS12.new( authority_params[:pkcs12].read, authority_params[:password] )
         @authority.private_key = pkcs12.key
-        @authority.certificate = pkcs12.certificate
-        # TODO: certificate sanity checks
-        # TODO: handle certificate chain
-        # pkcs12.ca_certs => Array of OpenSSL::X509::Certificate(s)
+        chain = Certificate.create_chain(*pkcs12.ca_certs)
+        @authority.build_certificate({x509: pkcs12.certificate, issuer: chain.first})
+        # TODO: certificate chain validation - really server's responsability, but doing client-side is user friendly
     rescue Exception => e
         redirect_to(new_authority_url, {alert: "Error decoding PKCS#12 file: #{e}"}) and return
     end

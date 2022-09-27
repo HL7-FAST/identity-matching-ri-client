@@ -12,7 +12,7 @@ class UDAPController < ApplicationController
     @client_id = ENV.fetch('CLIENT_ID', 'No Client Id')
     @client_secret = ENV.fetch('CLIENT_SECRET', 'No Client Secret')
     @identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
-    @trusted_cert_pem = Certificate.first.pem
+    #@trusted_cert_pem = Certificate.x509.to_pem
 
     begin
         response = RestClient.get(@patient_server.join('.well-known', 'udap'))
@@ -80,7 +80,7 @@ class UDAPController < ApplicationController
     # cert_chain = [ Base64.encode64(cert.to_der), Base64.encode64(root_cert.to_der) ]
     # @jwt = JWT.encode(software_statement, private_key, 'RS256', header_fields = {'x5c' => cert_chain}) # signed!
 
-    cert_chain = [ Base64.encode64(@authority.certificate.to_der) ]
+    cert_chain = @authority.x509_chain.map { |x509_cert| Base64.encode64(x509_cert.to_der) }
     @jwt = JWT.encode(software_statement, @authority.private_key, 'RS256', header_fields = {'x5c' => cert_chain}) # signed!
 
     Rails.logger.debug "==== Signed Software Statement ===="

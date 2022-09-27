@@ -1,47 +1,37 @@
+require_relative '../serializers/pem_serializer.rb'
+
 class Certificate < ApplicationRecord
 
-  belongs_to :authority
+  serialize :x509, PEM
+
+  belongs_to :authority, optional: true
 
   # self join
   has_many :dependents, class_name: "Certificate", foreign_key: "issuer_id"
   belongs_to :issuer, class_name: "Certificate", optional: true
 
-  # TODO: remove
-  def self.create_self_signed_x509_cert()
-    private_key = OpenSSL::PKey::RSA.new(2048)
-    public_key = private_key.public_key
-    subject = "/C=US/CN=Test"
-
-    cert = OpenSSL::X509::Certificate.new
-    cert.subject = cert.issuer = OpenSSL::X509::Name.parse(subject)
-    cert.not_before = Time.now
-    cert.not_after = Time.now + 365 * 24 * 60 * 60
-    cert.public_key = public_key
-    cert.serial = 0 # In production, this should be a secure random unique positive integer
-    cert.version = 2
-
-    ef = OpenSSL::X509::ExtensionFactory.new
-    ef.subject_certificate = cert
-    ef.issuer_certificate = cert
-
-    # TODO: double check extensions
-    cert.extensions = [
-      ef.create_extension("basicConstraints","CA:TRUE", true),
-      ef.create_extension("subjectKeyIdentifier", "hash"),
-      # ef.create_extension("keyUsage", "cRLSign,keyCertSign", true),
-    ]
-    cert.add_extension ef.create_extension("authorityKeyIdentifier",
-                                           "keyid:always,issuer:always")
-
-    cert.sign private_key, OpenSSL::Digest::SHA256.new
-
-    return self.create({pem: cert.to_pem})
+  # class method - create trust chain through Certificate self-join
+  #     i.e: (End Entity Cert) certificate <- certificate.issuer <- certificate.issuer.issuer (ROOT CA)
+  # params: [end-cert ... (ordered intermediate certs) ... root CA],
+  #     where each element is an OpenSSL::X509::Certificate object
+  # returns: trust chain as [ Certificate, ... ]
+  def self.create_chain(*args)
+    return [ Certificate.create(x509: args[0]) ] if args.length == 1
+    cert_array = args.reverse
+    last_cert = Certificate.create(x509: cert_array[0])
+    (1...cert_array.length).each do |i|
+        cert = Certificate.create(x509: cert_array[i], issuer: last_cert)
+        last_cert = cert
+    end
+    return last_cert.chain
   end
 
-  # TODO: replace with auto serialize?
-  # convert to `OpenSSL::X509::Certificate` object
-  def to_x509
-    OpenSSL::X509::Certificate.new( self.pem )
+  # returns issuer/trust chain of [ Certificate, ... ], where last element is Root CA
+  def chain
+    ret = [ self ]
+    while ret.last.issuer do
+        ret << ret.last.issuer
+    end
+    ret
   end
-
 end

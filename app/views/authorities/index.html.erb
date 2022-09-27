@@ -16,7 +16,7 @@ will allow the clients access if the server providers trust the certificate auth
     <td><%= authority.created_at.strftime '%r %x' %></td>
     <td><%= link_to "Download PEM", authority, download: authority.name.parameterize + ".pem" %></td>
     <td><%= link_to "Edit", edit_authority_path(authority), class: "text-success" %></td>
-    <td><%= button_to "Delete", authority, data: {'turbo-method' => :delete}, class: "btn btn-sm btn-danger" %></td>
+    <td><%= button_to "Delete", authority, method: :delete, class: "btn btn-sm btn-danger" %></td>
   </tr>
   <% end %>
 </table>

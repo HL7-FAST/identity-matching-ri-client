@@ -44,14 +44,13 @@ ActiveRecord::Schema[7.0].define(version: 2022_09_23_200028) do
 
   create_table "authorities", force: :cascade do |t|
     t.string "name", null: false
-    t.text "certificate"
     t.text "private_key"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "certificates", force: :cascade do |t|
-    t.text "pem"
+    t.text "x509"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "issuer_id"
