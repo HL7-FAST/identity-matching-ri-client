@@ -49,6 +49,7 @@ class UDAPController < ApplicationController
         'exp' => (now + 5 * 60).to_i, # exp in 5 mins
         'jti' => SecureRandom.uuid,
         'client_name' => 'Identity Matching RI Client',
+        'logo_uri' => image_uri('fast_logo_2022_sm.png'),
         'redirect_uris' => [ udap_redirect_url ],
         'grant_types' => ['authorization_code'], # TODO: blank array option will allow for cancelled registration
         'response_types' => ['code'],
@@ -147,5 +148,9 @@ class UDAPController < ApplicationController
   def set_authority
     #Rails.logger.debug "SETTING AUTHORITY WITH ID #{params.to_s}"
     @authority = Authority.find(params[:authority][:id])
+  end
+
+  def image_uri(name)
+    File.join(root_url, ActionController::Base.helpers.asset_url(name, type: :image))
   end
 end
