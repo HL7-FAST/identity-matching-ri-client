@@ -6,7 +6,7 @@
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
 
-Certificate.create_self_signed_x509_cert() # TODO remove
+#Certificate.create_self_signed_x509_cert() # TODO remove
 
 
 # Create self-signed root certificate authority

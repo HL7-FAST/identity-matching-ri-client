@@ -2,6 +2,7 @@ class UDAPController < ApplicationController
 
   before_action :set_patient_server
   # before_action :ensure_root_cert
+  before_action :set_authority, only: [:register]
 
   # GET /udap/start
   # follows PatientServerController#create to reset HTTP headers
@@ -55,8 +56,9 @@ class UDAPController < ApplicationController
         'scope' => 'udap */*' # TODO: get scope from input?
     }
 
-    # TODO: upload trusted cert option?
-    root_cert = Certificate.first.to_x509
+    ## Using self-signed cert to build end-entity certificate
+    =begin
+    root_cert = Authority.find_by!({name: "Self-Signed Certificate Authority"})
 
     private_key = OpenSSL::PKey::RSA.new(2048) # TODO: save private key?
     public_key = private_key.public_key
@@ -78,6 +80,10 @@ class UDAPController < ApplicationController
 
     cert_chain = [ Base64.encode64(cert.to_der), Base64.encode64(root_cert.to_der) ]
     @jwt = JWT.encode(software_statement, private_key, 'RS256', header_fields = {'x5c' => cert_chain}) # signed!
+    =end
+
+    cert_chain = [ Base64.encode64(@authority.certificate.to_der) ]
+    @jwt = JWT.encode(software_statement, @authority.private_key, 'RS256', header_fields = {'x5c' => cert_chain}) # signed!
 
     Rails.logger.debug "==== Signed Software Statement ===="
     Rails.logger.debug @jwt
@@ -138,5 +144,10 @@ class UDAPController < ApplicationController
     if Certificate.count == 0 then
       Certificate.create_self_signed_cert()
     end
+  end
+
+  def set_authority
+    Rails.logger.debug "SETTING AUTHORITY WITH ID #{params.to_s}"
+    @authority = Authority.find(params[:authority_id])
   end
 end
