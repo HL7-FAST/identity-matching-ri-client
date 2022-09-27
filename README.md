@@ -20,6 +20,7 @@ $ bundle install
 ```bash
 $ rails db:create
 $ rails db:migrate
+$ rails db:encryption:init
 ```
 
 3. Ensure Rails assets pipeline works
@@ -50,6 +51,15 @@ $ rails server
  - CLIENT_ID
  - CLIENT_SECRET
  - IDENTITY_PROVIDER
+ - RAILS_MASTER_KEY
+
+#### Rails Encryption
+This reference implementation stores private keys in AES-GCM 128-bit encryption, which requires secure random number generater seeding. The
+[Rails guide](https://guides.rubyonrails.org/active_record_encryption.html) and [this blog article](https://blog.saeloun.com/2019/10/10/rails-6-adds-support-for-multi-environment-credentials.html)
+explains how Rails handles this very well, but in essence track three things:
+ - config/credentials.yml.enc contains the encrypted seeds
+ - config/master.key **or** `RAILS_MASTER_KEY` environment variable contains the key for credentials.yml.enc, this should **never** be commited to git or posted publicly
+ - Use the command `rails credentials:edit` to view and edit the seeds, which requires a master key (above) and may require `EDITOR` environment variable
 
 ## License
 

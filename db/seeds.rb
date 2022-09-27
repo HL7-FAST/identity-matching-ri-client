@@ -14,7 +14,7 @@ skey = OpenSSL::PKey::RSA.new 2048
 sha = OpenSSL::Digest.new 'SHA256'
 cert = OpenSSL::X509::Certificate.new
 cert.version = 2 # specify v3 certificate
-cert.serial = 1
+cert.serial = SecureRandom.random_number(100).to_i
 cert.subject = OpenSSL::X509::Name.parse "/CN=Identity Matching RI Client/O=MITRE"
 cert.issuer = cert.subject # the self-signing
 cert.public_key = skey.public_key

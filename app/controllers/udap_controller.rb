@@ -147,6 +147,7 @@ class UDAPController < ApplicationController
 
   def set_authority
     #Rails.logger.debug "SETTING AUTHORITY WITH ID #{params.to_s}"
+    redirect_to(udap_start_url, alert: "Error: you must specify an authority from #{udap_start_url}") and return unless params.dig(:authority, :id)
     @authority = Authority.find(params[:authority][:id])
   end
 
