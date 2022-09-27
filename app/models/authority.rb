@@ -1,4 +1,4 @@
-require_relative '../serializers/pem_serializer.rb'
+#require_relative '../serializers/pem_serializer.rb'
 
 class Authority < ApplicationRecord
 
