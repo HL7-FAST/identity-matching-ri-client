@@ -145,7 +145,7 @@ class UDAPController < ApplicationController
   end
 
   def set_authority
-    Rails.logger.debug "SETTING AUTHORITY WITH ID #{params.to_s}"
-    @authority = Authority.find(params[:authority_id])
+    #Rails.logger.debug "SETTING AUTHORITY WITH ID #{params.to_s}"
+    @authority = Authority.find(params[:authority][:id])
   end
 end

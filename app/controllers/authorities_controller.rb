@@ -25,7 +25,7 @@ class AuthoritiesController < ApplicationController
     @authority = Authority.new(authority_params.slice(:name))
     begin
         pkcs12 = OpenSSL::PKCS12.new( authority_params[:pkcs12].read, authority_params[:password] )
-        @authority.private_key = pkcs12.private_key
+        @authority.private_key = pkcs12.key
         @authority.certificate = pkcs12.certificate
         # TODO: certificate sanity checks
         # TODO: handle certificate chain
