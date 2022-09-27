@@ -32,5 +32,5 @@ cert.sign(skey, sha)
 
 Authority.find_or_create_by(name: "Self-Signed Certificate Authority") do |a|
     a.private_key = skey;
-    a.certificate = cert;
+    a.build_certificate(x509: cert);
 end
