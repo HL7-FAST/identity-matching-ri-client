@@ -6,8 +6,10 @@ class Oauth2ControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should get redirect" do
+  # TODO: restart test
+
+  test "should reject redirect without proper params" do
     get oauth2_redirect_url
-    assert_response :success
+    assert_response :bad_request
   end
 end

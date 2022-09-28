@@ -1,32 +1,3 @@
-=begin
-# Open class for debugging
-class FHIR::Client
-
-    # Set the client to use OpenID Connect OAuth2 Authentication
-    # client -- client id
-    # secret -- client secret
-    # authorize_path -- absolute path of authorization endpoint
-    # token_path -- absolute path of token endpoint
-    def set_oauth2_auth(client, secret, authorize_path, token_path, site = nil)
-      FHIR.logger.info 'Configuring the client to use OpenID Connect OAuth2 authentication.'
-	  Rails.logger.debug "HIJACKED"
-
-      @use_oauth2_auth = true
-      @use_basic_auth = false
-      @security_headers = {}
-      options = {
-        site: site || @base_service_url,
-        authorize_url: authorize_path,
-        token_url: token_path,
-        raise_errors: true
-      }
-      client = OAuth2::Client.new(client, secret, options)
-      client.connection.proxy(proxy) unless proxy.nil?
-      @client = client.client_credentials.get_token
-    end
-end
-=end
-
 class Oauth2Controller < ApplicationController
 
   before_action :set_patient_server
@@ -35,16 +6,38 @@ class Oauth2Controller < ApplicationController
   # GET /oauth2/start
   # follows PatientServerController#create to reset HTTP headers
   def start
+
+    @bearer_token = ENV.fetch('BEARER_TOKEN', 'No Token')
+    @client_id = ENV.fetch('CLIENT_ID', 'No Client Id')
+    @client_secret = ENV.fetch('CLIENT_SECRET', 'No Client Secret')
+    @identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
+
+    begin
+        response = RestClient.get(@patient_server.join('.well-known', 'udap'))
+        @udap_metadata = JSON.parse(response.body)
+    rescue RestClient::ExceptionWithResponse => e
+        response = e.response
+        flash.now.alert = "#{@patient_server} does not support UDAP (missing /.well-known/udap)."
+    rescue Exception => e
+        flash.now.alert = "#{@patient_server.join('.well-known','udap')} is not valid JSON"
+    ensure
+        @udap_metadata ||= {"error" => e}
+    end
+
+
   end
 
   # POST /oauth2/register
-  # preform client registration as specified in security spec
+  ## IGNORE THIS ACTION!!
   def register
+    @identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
+
     rsa_private_key = OpenSSL::PKey::RSA.generate 2048
     rsa_public_key = rsa_private_key.public_key
 
 	payload = {
 		iss: "#{root_url}",
+        idp: @identity_provider,
 		sub: "client_id?", # TODO
 		aud: @patient_server.join('oauth','register'), # TODO: fetch from capability statement
 		#exp: (now + 4.5).to_i, # TODO
@@ -63,20 +56,26 @@ class Oauth2Controller < ApplicationController
     x509_cert_chain = [ self_signed_x509_cert(rsa_private_key, rsa_public_key) ] # TODO: load PEM cert chain option
 	token = JWT.encode(payload, rsa_private_key, 'RS256', { x5c: "#{x509_cert_chain}" })
 
-	response = RestClient.post(@patient_server.join('oauth','register'), payload=token, nil)
+    begin
+	    response = RestClient.post(@patient_server.join('oauth','register'), payload=token, nil)
+    rescue Exception => e
+        response = e.response
+        flash.alert = "Failed to send request to #{@patient_server.join('oauth','register')}"
+    end
 
 	# TODO check response
     Rails.logger.debug "== OAUTH2 REGISTER RESPONSE =="
     Rails.logger.debug response.to_json
     Rails.logger.debug "=============================="
 
-	redirect_to :root_url
+	redirect_to root_url
   end
 
   # GET /oauth2/restart
   # initiate actual oauth2 protocol - authorization code flow
   def restart
-	options = @client.get_oauth2_metadata_from_conformance
+    @identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
+	options = @fhir_client.get_oauth2_metadata_from_conformance
 
 	if options.blank?
 		options[:authorize_url] = @patient_server.join('oauth','authorize')
@@ -87,12 +86,14 @@ class Oauth2Controller < ApplicationController
 	end
     session[:token_url] = options[:token_url]
 
+    session[:state] = SecureRandom.uuid;
     @auth_params = {
         :response_type => 'code',
         :client_id => ENV["CLIENT_ID"],
         :redirect_uri => oauth2_redirect_url,
-        :state => SecureRandom.uuid,
-        :aud => @patient_server.base
+        :state => session[:state],
+        :aud => @patient_server.base,
+        :idp => @identity_provider
     }
 
     @authorize_url = options[:authorize_url] + "?" + @auth_params.to_query
@@ -114,7 +115,13 @@ class Oauth2Controller < ApplicationController
     @access_token = params[:access_token]
 
     if @code.present?
-        @state = params[:state] # TODO: validate state
+        @state = params[:state]
+        if @state != session[:state]
+            Rails.logger.error("Oauth2 state does not match!")
+            Rails.logger.error("Received state: #{@state}")
+            Rails.logger.error("Expected state: #{session[:state]}")
+            flash.now.alert = "Oauth state does not match, received: #{@state}, expected: #{session[:state]}"
+        end
 
 		@token_params = {
             :grant_type => 'authorization_code',
@@ -144,8 +151,8 @@ class Oauth2Controller < ApplicationController
         session[:access_token] = @token
         flash.now.notice = "Obtained access token!"
 
-        @client = FHIR::Client.new(@patient_server.base)
-        @client.set_bearer_token(@token)
+        @fhir_client = FHIR::Client.new(@patient_server.base)
+        @fhir_client.set_bearer_token(@token)
     else
 		Rails.logger.error "oauth2/redirect/ endpoint triggered but missing code parameter"
         flash.now.alert = "oauth2/redirect/ endpoint triggered without code parameter, params: #{params}"
@@ -158,7 +165,7 @@ class Oauth2Controller < ApplicationController
   private
 
   def set_client
-	@client = FHIR::Client.new(@patient_server.base)
+	@fhir_client = FHIR::Client.new(@patient_server.base)
 	yield
   end
 

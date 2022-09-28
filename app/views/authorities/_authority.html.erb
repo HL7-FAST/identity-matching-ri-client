@@ -1,0 +1,21 @@
+<div id="<%= dom_id authority %>">
+  <h2>Trusted Certificate Authority</h2>
+    <%= authority.name %>
+  </h2>
+
+  <p>
+    <strong>Certificate:</strong>
+    <%= link_to "View Certificate PEM", authority %>
+  </p>
+
+  <p>
+    <strong>Private key:</strong>
+    REDACTED
+  </p>
+
+  <p>
+    <strong>Created at:</strong>
+    <%= authority.created_at.strftime '%r %x' %>
+  </p>
+
+</div>

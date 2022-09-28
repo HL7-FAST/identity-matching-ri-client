@@ -89,4 +89,9 @@ gem "dotenv-rails", "~> 2.8"
 # Use OAuth2 gem
 gem "rack-oauth2"
 
+# JSON Web Tokens
 gem "jwt"
+
+# Directly require OpenSSL
+gem "openssl", '~> 3.0.1'
+

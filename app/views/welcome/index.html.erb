@@ -1,6 +1,6 @@
-<h1 class="w-100 text-center">Identity Matching RI Client</h1>
+<h1 class="w-100 text-center">Identity Matching & UDAP Security RI Client</h1>
 
-<p class="lead">This is a client reference implementation conforming to the <a href="https://build.fhir.org/ig/HL7/fhir-identity-matching-ig/index.html">FHIR Identity Matching IG</a> by the FHIR at Scale Taskforce (FAST).</p>
+<p class="lead">This is a client reference implementation conforming to the <a href="http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/index.html">Identity Matching IG</a> and <a href="http://build.fhir.org/ig/HL7/fhir-udap-security-ig/">UDAP Security IG</a> by the FHIR&reg; at Scale Taskforce (FAST).</p>
 
 <p class="lead">Please enter a conforming server implementation to continue:</p>
 
@@ -15,10 +15,10 @@
 			<%= f.submit "Metadata", class: "btn btn-warning" %>
 		</div>
 		<div class="col-auto">
-			<%= f.submit "Register (UDAP)", class: "btn btn-dark" %>
+			<%= f.submit "Register (UDAP Dynamic Client Registration)", class: "btn btn-dark" %>
 		</div>
 		<div class="col-auto">
-			<%= f.submit "Authenticate (OAuth2)", class: "btn btn-danger" %>
+			<%= f.submit "Authenticate (UDAP Tiered OAuth2)", class: "btn btn-danger" %>
 		</div>
 		<div class="col-auto">
 			<%= f.submit "Match Patient", class: "btn btn-primary" %>
@@ -30,3 +30,8 @@
 <p class="">Bearer Token: <%= ENV.fetch('BEARER_TOKEN', 'No Token') %></p>
 <p class="">Client Id: <%= ENV.fetch('CLIENT_ID', 'No Client Id') %></p>
 <p class="">Client Secret: <%= ENV.fetch('CLIENT_SECRET', 'No Secret') %></p>
+
+<hr />
+<div class="row justify-content-center">
+    <%= image_tag "fast_logo_2022_sm.png", class: "img-fluid", style: "max-width:500px;" %>
+</div>
