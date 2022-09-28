@@ -27,25 +27,38 @@ class AuthoritiesController < ApplicationController
   def create
     puts "---------- authorities#create --------------"
     @authority = Authority.new(authority_params.slice(:name))
+    puts "DEBUG 1"
     begin
         pkcs12 = OpenSSL::PKCS12.new( authority_params[:pkcs12].read, authority_params[:password] )
+        puts "DEBUG 2"
         @authority.private_key = pkcs12.key
+        puts "DEBUG 3"
         chain = Certificate.create_chain(*pkcs12.ca_certs)
+        puts "DEBUG 4"
         @authority.build_certificate({x509: pkcs12.certificate, issuer: chain.first})
+        puts "DEBUG 5"
+
         # TODO: certificate chain validation - really server's responsability, but doing client-side is user friendly
     rescue Exception => e
+        puts "DEBUG A"
+
         redirect_to(new_authority_url, {alert: "Error decoding PKCS#12 file: #{e}"}) and return
     end
 
+    puts "DEBUG 6"
     respond_to do |format|
       if @authority.save
+        puts "DEBUG 7"
         format.html { redirect_to(udap_start_url, {notice: "Authority #{@authority.name} added successfully."}) }
         format.json { render :show, status: :created, location: @authority }
       else
+        puts "DEBUG B"
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @authority.errors, status: :unprocessable_entity }
       end
     end
+
+    puts "------------- end create -------------------"
   end
 
   # PATCH/PUT /authorities/1 or /authorities/1.json
