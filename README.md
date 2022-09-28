@@ -21,6 +21,8 @@ $ bundle install
 $ rails db:create
 $ rails db:migrate
 $ rails db:encryption:init
+# copy the YML entry for active record encryption
+$ rails credentials:edit # this opens an editor - paste the entry above here
 ```
 
 3. Ensure Rails assets pipeline works
