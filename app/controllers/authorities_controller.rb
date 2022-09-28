@@ -29,9 +29,12 @@ class AuthoritiesController < ApplicationController
     @authority = Authority.new(authority_params.slice(:name))
     puts "DEBUG 1"
     begin
-        puts "DEBUG #{authority_params}"
-        puts "DEBUG #{Base64.encode64(authority_params[:pkcs12].read)}"
-        pkcs12 = OpenSSL::PKCS12.new( authority_params[:pkcs12].read, authority_params[:password] )
+        ap = authority_params
+        puts "DEBUG #{ap}"
+        der = ap[:pkcs12].read
+        puts "DEBUG #{Base64.encode64(der)}"
+
+        pkcs12 = OpenSSL::PKCS12.new( der, ap[:password] )
         puts "DEBUG 2"
         @authority.private_key = pkcs12.key
         puts "DEBUG 3"
