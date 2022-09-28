@@ -1,4 +1,4 @@
-# Identity Matching RI Client
+# Identity Matching & UDAP Security RI Client
 Reference implementation (RI) client for [Interoperable Identity and Patient Matching](http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/) and [UDAP Security](https://build.fhir.org/ig/HL7/fhir-udap-security-ig/) implementation guides.
 
 ## Dependencies
