@@ -8,7 +8,7 @@ class AuthoritiesController < ApplicationController
 
   # GET /authorities/1 or /authorities/1.json
   def show
-    render plain: @authority.certificate.to_pem
+    render plain: @authority.certificate&.x509&.to_pem # renders certificate PEM or null
   end
 
   # GET /authorities/new

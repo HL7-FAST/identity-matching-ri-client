@@ -23,7 +23,9 @@ class AuthorityTest < ActiveSupport::TestCase
     cert.add_extension(ef.create_extension("authorityKeyIdentifier","keyid:always",false))
     cert.sign(skey, sha)
 
-    @authority = Authority.create(name: "Test Authority", private_key: skey, certificate: cert);
+    @authority = Authority.new(name: "Test Authority", private_key: skey);
+    @authority.build_certificate(x509: cert);
+    @authority.save!
   end
 
   test "authority model exists" do
@@ -36,7 +38,7 @@ class AuthorityTest < ActiveSupport::TestCase
 
   test "authority has certificate" do
     assert @authority.certificate
-    assert @authority.certificate.class == OpenSSL::X509::Certificate
+    assert @authority.certificate.x509.class == OpenSSL::X509::Certificate
   end
 
   test "authority has private key" do
@@ -46,6 +48,10 @@ class AuthorityTest < ActiveSupport::TestCase
 
   test "authority has public key" do
     assert @authority.public_key
+  end
+
+  test "authority can build chain" do
+    assert @authority.x509_chain
   end
 
 end
