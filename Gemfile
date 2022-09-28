@@ -93,5 +93,5 @@ gem "rack-oauth2"
 gem "jwt"
 
 # Directly require OpenSSL
-#gem "openssl", '~> 3.0.1'
+gem "openssl", '~> 3.0.1'
 
