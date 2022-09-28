@@ -1,6 +1,8 @@
 class AuthoritiesController < ApplicationController
   before_action :set_authority, only: %i[ show edit update destroy ]
 
+  puts "==== loaded authorities controller ====="
+
   # GET /authorities or /authorities.json
   def index
     @authorities = Authority.all
@@ -14,6 +16,7 @@ class AuthoritiesController < ApplicationController
   # GET /authorities/new
   def new
     @authority = Authority.new
+    puts "--------- authorities#new ---------------"
   end
 
   # GET /authorities/1/edit
@@ -22,6 +25,7 @@ class AuthoritiesController < ApplicationController
 
   # POST /authorities or /authorities.json
   def create
+    puts "---------- authorities#create --------------"
     @authority = Authority.new(authority_params.slice(:name))
     begin
         pkcs12 = OpenSSL::PKCS12.new( authority_params[:pkcs12].read, authority_params[:password] )
