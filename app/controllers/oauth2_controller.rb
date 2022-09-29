@@ -164,7 +164,7 @@ class Oauth2Controller < ApplicationController
 
   private
   def patient_server_params
-    params.require(:patient_server).permit(:client_id, :identity_provider)
+    params.require( :patient_server ).permit(:client_id, :identity_provider)
   end
 
   def set_client
