@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get 'welcome/index'
   get 'welcome/terms'
   get 'welcome/privacy'
+  get 'welcome/ifconfig'
   get 'index', {controller: :welcome_controller, action: :index}
 
   get 'patient_server', {controller: :patient_server, action: :show}
