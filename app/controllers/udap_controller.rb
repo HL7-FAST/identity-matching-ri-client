@@ -104,10 +104,9 @@ class UDAPController < ApplicationController
         end
     end
 
-    Rails.logger.debug "====== Registration Response ======="
-    Rails.logger.debug bsponse.body
-    Rails.logger.debug "===================================="
-    # FIXME: udap authorization server times out?
+    # Rails.logger.debug "====== Registration Response ======="
+    # Rails.logger.debug bsponse.body
+    # Rails.logger.debug "===================================="
 
     begin
         registration = JSON.parse(bsponse.body)
@@ -125,7 +124,9 @@ class UDAPController < ApplicationController
             flash.alert = "Warning: Registration success but response code should be 201 but client received #{bsponse.code}"
         end
         @client_id = registration['client_id']
-        ENV['client_id'] = @client_id
+        @patient_server.client_id = @client_id
+        Rails.logger.error "Failed to save client id" unless @patient_server.save
+        #ENV['client_id'] = @client_id
         flash.notice = "Client registration success (client_id set to: #{@client_id})"
     else  # nonconformant
         flash.alert = "UDAP registration response missing JSON keys - expected 'client_id' or 'error', got: #{registration}"
