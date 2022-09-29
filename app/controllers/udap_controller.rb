@@ -8,10 +8,10 @@ class UDAPController < ApplicationController
   # follows PatientServerController#create to reset HTTP headers
   def start
 
-    @bearer_token = ENV.fetch('BEARER_TOKEN', 'No Token')
-    @client_id = ENV.fetch('CLIENT_ID', 'No Client Id')
-    @client_secret = ENV.fetch('CLIENT_SECRET', 'No Client Secret')
-    @identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
+    #@bearer_token = ENV.fetch('BEARER_TOKEN', 'No Token')
+    #@client_id = ENV.fetch('CLIENT_ID', 'No Client Id')
+    #@client_secret = ENV.fetch('CLIENT_SECRET', 'No Client Secret')
+    #@identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
     #@trusted_cert_pem = Certificate.x509.to_pem
 
     begin
@@ -42,8 +42,8 @@ class UDAPController < ApplicationController
     # I guess client app could check x5c to verify a CA, but this is not in the spec for client
 
     software_statement = {
-        'iss' => root_url,
-        'sub' => root_url,
+        'iss' => "https://test.healthtogo.me/udap-sandbox/mitre", #root_url,
+        'sub' => "https://test.healthtogo.me/udap-sandbox/mitre", # root_url,
         'aud' => @udap_metadata['registration_endpoint'],
         'iat' => (now = Time.now).to_i,
         'exp' => (now + 5 * 60).to_i, # exp in 5 mins
@@ -51,10 +51,10 @@ class UDAPController < ApplicationController
         'client_name' => 'Identity Matching RI Client',
         'logo_uri' => image_uri('fast_logo_2022_sm.png'),
         'redirect_uris' => [ udap_redirect_url ],
-        'grant_types' => ['authorization_code'], # TODO: blank array option will allow for cancelled registration
+        'grant_types' => ['authorization_code'], # blank array option would cancel registration
         'response_types' => ['code'],
         'token_endpoint_auth_method' => 'private_key_jwt',
-        'scope' => 'udap */*' # TODO: get scope from input?
+        'scope' => 'udap */*'
     }
 
     ## Using self-signed cert to build end-entity certificate
@@ -104,10 +104,9 @@ class UDAPController < ApplicationController
         end
     end
 
-    Rails.logger.debug "====== Registration Response ======="
-    Rails.logger.debug bsponse.body
-    Rails.logger.debug "===================================="
-    # FIXME: udap authorization server times out?
+    # Rails.logger.debug "====== Registration Response ======="
+    # Rails.logger.debug bsponse.body
+    # Rails.logger.debug "===================================="
 
     begin
         registration = JSON.parse(bsponse.body)
@@ -125,7 +124,9 @@ class UDAPController < ApplicationController
             flash.alert = "Warning: Registration success but response code should be 201 but client received #{bsponse.code}"
         end
         @client_id = registration['client_id']
-        ENV['client_id'] = @client_id
+        @patient_server.client_id = @client_id
+        Rails.logger.error "Failed to save client id" unless @patient_server.save
+        #ENV['client_id'] = @client_id
         flash.notice = "Client registration success (client_id set to: #{@client_id})"
     else  # nonconformant
         flash.alert = "UDAP registration response missing JSON keys - expected 'client_id' or 'error', got: #{registration}"

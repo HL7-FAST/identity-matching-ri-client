@@ -8,9 +8,8 @@ class Oauth2Controller < ApplicationController
   def start
 
     @bearer_token = ENV.fetch('BEARER_TOKEN', 'No Token')
-    @client_id = ENV.fetch('CLIENT_ID', 'No Client Id')
-    @client_secret = ENV.fetch('CLIENT_SECRET', 'No Client Secret')
-    @identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
+    @patient_server.client_id ||= ENV.fetch('CLIENT_ID', 'No Client Id')
+    @patient_server.identity_provider ||= ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
 
     begin
         response = RestClient.get(@patient_server.join('.well-known', 'udap'))
@@ -28,53 +27,55 @@ class Oauth2Controller < ApplicationController
   end
 
   # POST /oauth2/register
-  ## IGNORE THIS ACTION!!
-  def register
-    @identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
-
-    rsa_private_key = OpenSSL::PKey::RSA.generate 2048
-    rsa_public_key = rsa_private_key.public_key
-
-	payload = {
-		iss: "#{root_url}",
-        idp: @identity_provider,
-		sub: "client_id?", # TODO
-		aud: @patient_server.join('oauth','register'), # TODO: fetch from capability statement
-		#exp: (now + 4.5).to_i, # TODO
-		iat: DateTime.now.to_i,
-		jti: SecureRandom.base58,
-		client_name: "encode.rb", # TODO
-		redirect_uris: "[\"#{oauth2_redirect_url}\"]",
-		contacts: '["mailto:shaumikashraf@mitre.org"]',
-		logo_uri: "https://hl7.org/fhir/assets/images/fhir-logo.png",
-		grant_types: "authorization_code",
-		response_types: '["code"]',
-		token_endpoint_auth_method: "private_key-jwt",
-		scope: "system/Patient.read system/Observation.read"
-	}
-
-    x509_cert_chain = [ self_signed_x509_cert(rsa_private_key, rsa_public_key) ] # TODO: load PEM cert chain option
-	token = JWT.encode(payload, rsa_private_key, 'RS256', { x5c: "#{x509_cert_chain}" })
-
-    begin
-	    response = RestClient.post(@patient_server.join('oauth','register'), payload=token, nil)
-    rescue Exception => e
-        response = e.response
-        flash.alert = "Failed to send request to #{@patient_server.join('oauth','register')}"
-    end
-
-	# TODO check response
-    Rails.logger.debug "== OAUTH2 REGISTER RESPONSE =="
-    Rails.logger.debug response.to_json
-    Rails.logger.debug "=============================="
-
-	redirect_to root_url
-  end
+  ## IGNORE THIS ACTION - registration handled by udap controller
+  # def register
+  #   @identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
+  #
+  #   rsa_private_key = OpenSSL::PKey::RSA.generate 2048
+  #   rsa_public_key = rsa_private_key.public_key
+  #
+  # payload = {
+  # 	iss: "#{root_url}",
+  #       idp: @identity_provider,
+  # 	sub: "client_id?", # TODO
+  # 	aud: @patient_server.join('oauth','register'), # TODO: fetch from capability statement
+  # 	#exp: (now + 4.5).to_i, # TODO
+  # 	iat: DateTime.now.to_i,
+  # 	jti: SecureRandom.base58,
+  # 	client_name: "encode.rb", # TODO
+  # 	redirect_uris: "[\"#{oauth2_redirect_url}\"]",
+  # 	contacts: '["mailto:shaumikashraf@mitre.org"]',
+  # 	logo_uri: "https://hl7.org/fhir/assets/images/fhir-logo.png",
+  # 	grant_types: "authorization_code",
+  # 	response_types: '["code"]',
+  # 	token_endpoint_auth_method: "private_key-jwt",
+  # 	scope: "system/Patient.read system/Observation.read"
+  # }
+  #
+  #   x509_cert_chain = [ self_signed_x509_cert(rsa_private_key, rsa_public_key) ] # TODO: load PEM cert chain option
+  #   token = JWT.encode(payload, rsa_private_key, 'RS256', { x5c: "#{x509_cert_chain}" })
+  #
+  #   begin
+  #     response = RestClient.post(@patient_server.join('oauth','register'), payload=token, nil)
+  #   rescue Exception => e
+  #       response = e.response
+  #       flash.alert = "Failed to send request to #{@patient_server.join('oauth','register')}"
+  #   end
+  #
+  #   Rails.logger.debug "== OAUTH2 REGISTER RESPONSE =="
+  #   Rails.logger.debug response.to_json
+  #   Rails.logger.debug "=============================="
+  #
+  #   redirect_to root_url
+  # end
 
   # GET /oauth2/restart
   # initiate actual oauth2 protocol - authorization code flow
   def restart
-    @identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
+    @patient_server.update(patient_server_params)
+
+    @identity_provider = @patient_server.identity_provider
+    @identity_provider ||= 'No UDAP Identity Provider URL'
 	options = @fhir_client.get_oauth2_metadata_from_conformance
 
 	if options.blank?
@@ -89,11 +90,11 @@ class Oauth2Controller < ApplicationController
     session[:state] = SecureRandom.uuid;
     @auth_params = {
         :response_type => 'code',
-        :client_id => ENV["CLIENT_ID"],
+        :client_id => @patient_server.client_id,
         :redirect_uri => oauth2_redirect_url,
         :state => session[:state],
         :aud => @patient_server.base,
-        :idp => @identity_provider
+        :idp => @patient_server.identity_provider
     }
 
     @authorize_url = options[:authorize_url] + "?" + @auth_params.to_query
@@ -163,39 +164,14 @@ class Oauth2Controller < ApplicationController
   end
 
   private
+  def patient_server_params
+    params.require( :patient_server ).permit(:client_id, :identity_provider)
+  end
 
   def set_client
 	@fhir_client = FHIR::Client.new(@patient_server.base)
 	yield
   end
-
-  def self_signed_x509_cert(private_key, public_key)
-    subject = "/C=US/CN=Test"
-
-    cert = OpenSSL::X509::Certificate.new
-    cert.subject = cert.issuer = OpenSSL::X509::Name.parse(subject)
-    cert.not_before = Time.now
-    cert.not_after = Time.now + 365 * 24 * 60 * 60
-    cert.public_key = public_key
-    cert.serial = 0 # In production, this should be a secure random unique positive integer
-    cert.version = 2
-
-    ef = OpenSSL::X509::ExtensionFactory.new
-    ef.subject_certificate = cert
-    ef.issuer_certificate = cert
-    cert.extensions = [
-      ef.create_extension("basicConstraints","CA:TRUE", true),
-      ef.create_extension("subjectKeyIdentifier", "hash"),
-      # ef.create_extension("keyUsage", "cRLSign,keyCertSign", true),
-    ]
-    cert.add_extension ef.create_extension("authorityKeyIdentifier",
-                                           "keyid:always,issuer:always")
-
-    cert.sign private_key, OpenSSL::Digest::SHA256.new
-
-    cert.to_pem
-  end
-
 
 
 end

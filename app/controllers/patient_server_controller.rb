@@ -32,13 +32,11 @@ class PatientServerController < ApplicationController
   private
 
   def patient_server_params
-	sanitized_params = params.require(:patient_server).permit([:base])
+	sanitized_params = params.require(:patient_server).permit([:base, :client_id, :identity_provider])
 
     # normalize URL
 	url = sanitized_params[:base]
 	url = 'http://' + url unless url.starts_with? /https?:\/\//
-
-	# TODO: normalize URL better
 
 	sanitized_params[:base] = url
 	return sanitized_params
