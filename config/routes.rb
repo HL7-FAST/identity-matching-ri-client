@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   post 'patient_servers', {controller: :patient_server, action: :create}
 
   get 'identity_matchings/example'
-  resources :identity_matchings
+  resources :identity_matchings, except: [:edit, :update]
 
   get 'oauth2/start'
   get 'oauth2/restart'

@@ -26,48 +26,6 @@ class Oauth2Controller < ApplicationController
 
   end
 
-  # POST /oauth2/register
-  ## IGNORE THIS ACTION - registration handled by udap controller
-  # def register
-  #   @identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
-  #
-  #   rsa_private_key = OpenSSL::PKey::RSA.generate 2048
-  #   rsa_public_key = rsa_private_key.public_key
-  #
-  # payload = {
-  # 	iss: "#{root_url}",
-  #       idp: @identity_provider,
-  # 	sub: "client_id?", # TODO
-  # 	aud: @patient_server.join('oauth','register'), # TODO: fetch from capability statement
-  # 	#exp: (now + 4.5).to_i, # TODO
-  # 	iat: DateTime.now.to_i,
-  # 	jti: SecureRandom.base58,
-  # 	client_name: "encode.rb", # TODO
-  # 	redirect_uris: "[\"#{oauth2_redirect_url}\"]",
-  # 	contacts: '["mailto:shaumikashraf@mitre.org"]',
-  # 	logo_uri: "https://hl7.org/fhir/assets/images/fhir-logo.png",
-  # 	grant_types: "authorization_code",
-  # 	response_types: '["code"]',
-  # 	token_endpoint_auth_method: "private_key-jwt",
-  # 	scope: "system/Patient.read system/Observation.read"
-  # }
-  #
-  #   x509_cert_chain = [ self_signed_x509_cert(rsa_private_key, rsa_public_key) ] # TODO: load PEM cert chain option
-  #   token = JWT.encode(payload, rsa_private_key, 'RS256', { x5c: "#{x509_cert_chain}" })
-  #
-  #   begin
-  #     response = RestClient.post(@patient_server.join('oauth','register'), payload=token, nil)
-  #   rescue Exception => e
-  #       response = e.response
-  #       flash.alert = "Failed to send request to #{@patient_server.join('oauth','register')}"
-  #   end
-  #
-  #   Rails.logger.debug "== OAUTH2 REGISTER RESPONSE =="
-  #   Rails.logger.debug response.to_json
-  #   Rails.logger.debug "=============================="
-  #
-  #   redirect_to root_url
-  # end
 
   # GET /oauth2/restart
   # initiate actual oauth2 protocol - authorization code flow
