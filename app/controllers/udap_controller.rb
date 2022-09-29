@@ -8,10 +8,10 @@ class UDAPController < ApplicationController
   # follows PatientServerController#create to reset HTTP headers
   def start
 
-    @bearer_token = ENV.fetch('BEARER_TOKEN', 'No Token')
-    @client_id = ENV.fetch('CLIENT_ID', 'No Client Id')
-    @client_secret = ENV.fetch('CLIENT_SECRET', 'No Client Secret')
-    @identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
+    #@bearer_token = ENV.fetch('BEARER_TOKEN', 'No Token')
+    #@client_id = ENV.fetch('CLIENT_ID', 'No Client Id')
+    #@client_secret = ENV.fetch('CLIENT_SECRET', 'No Client Secret')
+    #@identity_provider = ENV.fetch('IDENTITY_PROVIDER', 'No UDAP Identity Provider URL')
     #@trusted_cert_pem = Certificate.x509.to_pem
 
     begin
@@ -42,7 +42,7 @@ class UDAPController < ApplicationController
     # I guess client app could check x5c to verify a CA, but this is not in the spec for client
 
     software_statement = {
-        'iss' => root_url,
+        'iss' => "https://test.healthtogo.me/udap-sandbox/mitre", #root_url,
         'sub' => root_url,
         'aud' => @udap_metadata['registration_endpoint'],
         'iat' => (now = Time.now).to_i,
