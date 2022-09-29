@@ -72,8 +72,8 @@ class Oauth2Controller < ApplicationController
   # GET /oauth2/restart
   # initiate actual oauth2 protocol - authorization code flow
   def restart
-    @patient_server.client_id = params[:patient_server][:client_id]
-    @patient_server.identity_provider = params[:patient_server][:identity_provider]
+    @patient_server.update(patient_server_params)
+
     @identity_provider = @patient_server.identity_provider
     @identity_provider ||= 'No UDAP Identity Provider URL'
 	options = @fhir_client.get_oauth2_metadata_from_conformance
@@ -164,9 +164,9 @@ class Oauth2Controller < ApplicationController
   end
 
   private
-  #def patient_server_params
-  #  params.require( :patient_server ).permit(:client_id, :identity_provider)
-  #end
+  def patient_server_params
+    params.require( :patient_server ).permit(:client_id, :identity_provider)
+  end
 
   def set_client
 	@fhir_client = FHIR::Client.new(@patient_server.base)
