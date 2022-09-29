@@ -48,6 +48,13 @@ $ rails server
 
 6. Go to <http://localhost:3000>
 
+## Certificate Authorities
+If you only want a client for patient identity matching you can disregard the authentication and UDAP security aspects of this RI. If your server only supports the minimal authorization framework with OAuth2, you can manually register this app and obtain an access token, and then upload the access token via the environment variable `BEARER_TOKEN`.
+
+If you want to utilize the UDAP Security aspect of the client, this RI comes with one self-signed Certificate Authority, that you can download the digital certificate for and add to a UDAP server's trusted validation certificates. However, the recommended usage is to upload a PKCS#12 encoded file (*.p12 file) which provides this application with the private key and certificate chain needed for UDAP registration. This application encrypts all saves all (encrypted) private keys and certificates, lets you choose an Authority (which dictates private key and certificate chain), and signs the UDAP registration software statement with subjectAltName `https://fhir-secid-client.herokuapp.com`. Attempting UDAP Dynamic Client registration with this app in a local dev environment may fail because the subjectAltName will not match the root_url.
+
+Private keys should be handled with utmost secrecy. In practice an application may only utilize one authority (private key and x509 certificate chain), and any authorization/authentication controls should be behind secured access.
+
 ## Environment Variables
  - BEARER_TOKEN
  - CLIENT_ID
@@ -56,7 +63,7 @@ $ rails server
  - RAILS_MASTER_KEY
 
 #### Rails Encryption
-This reference implementation stores private keys in AES-GCM 128-bit encryption, which requires secure random number generater seeding. The
+This RI stores private keys in AES-GCM 128-bit encryption, which requires secure random number generater seeding. The
 [Rails guide](https://guides.rubyonrails.org/active_record_encryption.html) and [this blog article](https://blog.saeloun.com/2019/10/10/rails-6-adds-support-for-multi-environment-credentials.html)
 explains how Rails handles this very well, but in essence track three things:
  - config/credentials.yml.enc contains the encrypted seeds
