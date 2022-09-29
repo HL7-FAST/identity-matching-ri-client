@@ -46,7 +46,7 @@ $ rails server
 
 6. Go to <http://localhost:3000>
 
-## Miscellanious
+## Miscellaneous
 ### Certificate Authorities
 If you only want a client for patient identity matching you can disregard the authentication and UDAP security aspects of this RI. If your server only supports the minimal authorization framework with OAuth2, you can manually register this app and obtain an access token, and then upload the access token via the environment variable `BEARER_TOKEN`.
 
