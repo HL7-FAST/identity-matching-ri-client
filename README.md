@@ -1,5 +1,6 @@
 # Identity Matching & UDAP Security RI Client
-Reference implementation (RI) client for [Interoperable Identity and Patient Matching](http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/) and [UDAP Security](https://build.fhir.org/ig/HL7/fhir-udap-security-ig/) implementation guides.
+Reference implementation (RI) client for [Interoperable Identity and Patient Matching](http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/) and [UDAP Security](https://build.fhir.org/ig/HL7/fhir-udap-security-ig/) implementation guides. The client's primary features are: patient matching requests, patient identity
+weighted score validation, UDAP dynamic client registration, and UDAP tiered OAuth2.
 
 ## Dependencies
  - [Ruby 3.1.2](https://www.ruby-lang.org/en/)
@@ -31,14 +32,12 @@ $ rails assets:precompile
 ```
 
 4. Add security credentials if any
- - `export BEARER_TOKEN=[your token]` for hard coded token-based authorization OR
- - `export CLIENT_ID=[your app id] CLIENT_SECRET=[your secret]` as pre-registered OAuth2 client
+ - `export BEARER_TOKEN=[your token]` for hard coded token-based authorization
 
 Alternatively you can create a [.env](https://github.com/bkeepers/dotenv#usage) file and set the environment variables, for example:
 ```dotenv
 # .env
-CLIENT_ID=[your app id]
-CLIENT_SECRET=[your secret]
+BEARER_TOKEN=[your token]
 ```
 
 5. Launch server
@@ -48,21 +47,24 @@ $ rails server
 
 6. Go to <http://localhost:3000>
 
-## Certificate Authorities
+## Miscellanious
+### Certificate Authorities
 If you only want a client for patient identity matching you can disregard the authentication and UDAP security aspects of this RI. If your server only supports the minimal authorization framework with OAuth2, you can manually register this app and obtain an access token, and then upload the access token via the environment variable `BEARER_TOKEN`.
 
 If you want to utilize the UDAP Security aspect of the client, this RI comes with one self-signed Certificate Authority, that you can download the digital certificate for and add to a UDAP server's trusted validation certificates. However, the recommended usage is to upload a PKCS#12 encoded file (*.p12 file) which provides this application with the private key and certificate chain needed for UDAP registration. This application encrypts all saves all (encrypted) private keys and certificates, lets you choose an Authority (which dictates private key and certificate chain), and signs the UDAP registration software statement with subjectAltName `https://test.healthtogo.me/udap-sandbox/mitre`. Attempting UDAP Dynamic Client registration with this app in a local dev environment may fail because the subjectAltName does not match.
 
 Private keys should be handled with utmost secrecy. In practice an application may only utilize one authority (private key and x509 certificate chain), and any authorization/authentication controls should be behind secured access.
 
-## Environment Variables
+### Rails, UDAP, SOP, and CORS
+Both Dynamic Client registration and Tiered OAuth work by taking the user to a "start" page where they may view/revise the relevant info and then initiate the protocol. Ruby on Rails may override form/button GET requests and POST requests with Fetch API javascript requests, which may make the protocol to due to [Single Origin Policy (SOP)](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy) (a.k.a. misfigured CORS). You can by pass this by either configure CORS properly on the UDAP server (both resource and identity provider server if necessary) or disabling JavaScript on your web browser (which will have Rails fallback to traditional HTTP requests). Old browsers may also fail if they do not implement the Fetch API, in which case you can try a [Fetch Polyfill](https://github.com/github/fetch).
+
+### Environment Variables
  - BEARER_TOKEN
- - CLIENT_ID
- - CLIENT_SECRET
- - IDENTITY_PROVIDER
+ - IDENTITY_PROVIDER (fallback default)
+ - RAILS_ENV
  - RAILS_MASTER_KEY
 
-#### Rails Encryption
+### Rails Encryption
 This RI stores private keys in AES-GCM 128-bit encryption, which requires secure random number generater seeding. The
 [Rails guide](https://guides.rubyonrails.org/active_record_encryption.html) and [this blog article](https://blog.saeloun.com/2019/10/10/rails-6-adds-support-for-multi-environment-credentials.html)
 explains how Rails handles this very well, but in essence track three things:
