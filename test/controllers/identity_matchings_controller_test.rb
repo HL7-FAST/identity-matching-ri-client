@@ -28,11 +28,11 @@ class IdentityMatchingsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "should get edit" do
-    get edit_identity_matching_url(@identity_matching)
-    assert_response :success
-  end
-
+#  test "should get edit" do
+#    get edit_identity_matching_url(@identity_matching)
+#    assert_response :success
+#  end
+#
 #  test "should update identity_matching" do
 #    flunk # TODO: controller update
 #

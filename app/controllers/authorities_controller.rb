@@ -1,8 +1,6 @@
 class AuthoritiesController < ApplicationController
   before_action :set_authority, only: %i[ show edit update destroy ]
 
-  puts "==== loaded authorities controller ====="
-
   # GET /authorities or /authorities.json
   def index
     @authorities = Authority.all
@@ -16,7 +14,6 @@ class AuthoritiesController < ApplicationController
   # GET /authorities/new
   def new
     @authority = Authority.new
-    puts "--------- authorities#new ---------------"
   end
 
   # GET /authorities/1/edit
@@ -25,23 +22,15 @@ class AuthoritiesController < ApplicationController
 
   # POST /authorities or /authorities.json
   def create
-    puts "---------- authorities#create --------------"
     @authority = Authority.new(authority_params.slice(:name))
-    puts "DEBUG 1"
     begin
         ap = authority_params
-        puts "DEBUG #{ap}"
         der = ap[:pkcs12].read
-        puts "DEBUG #{Base64.encode64(der)}"
 
         pkcs12 = OpenSSL::PKCS12.new( der, ap[:password] )
-        puts "DEBUG 2"
         @authority.private_key = pkcs12.key
-        puts "DEBUG 3"
         chain = Certificate.create_chain(*pkcs12.ca_certs)
-        puts "DEBUG 4"
         @authority.build_certificate({x509: pkcs12.certificate, issuer: chain.first})
-        puts "DEBUG 5"
 
         # TODO: certificate chain validation - really server's responsability, but doing client-side is user friendly
     rescue Exception => e
