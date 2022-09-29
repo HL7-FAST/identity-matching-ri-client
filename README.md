@@ -1,6 +1,5 @@
 # Identity Matching & UDAP Security RI Client
-Reference implementation (RI) client for [Interoperable Identity and Patient Matching](http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/) and [UDAP Security](https://build.fhir.org/ig/HL7/fhir-udap-security-ig/) implementation guides. The client's primary features are: patient matching requests, patient identity
-weighted score validation, UDAP dynamic client registration, and UDAP tiered OAuth2.
+Reference implementation (RI) client for [Interoperable Identity and Patient Matching](http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/) and [UDAP Security](https://build.fhir.org/ig/HL7/fhir-udap-security-ig/) implementation guides. The client's primary features are: patient matching requests, patient identity weighted score validation, UDAP dynamic client registration, and UDAP tiered OAuth2. You can try this app out at <https://fhir-secid-herokuapp.com> until [November 28th 2022](https://blog.heroku.com/next-chapter).
 
 ## Dependencies
  - [Ruby 3.1.2](https://www.ruby-lang.org/en/)
@@ -71,6 +70,11 @@ explains how Rails handles this very well, but in essence track three things:
  - config/credentials.yml.enc contains the encrypted seeds
  - config/master.key **or** `RAILS_MASTER_KEY` environment variable contains the key for credentials.yml.enc, this should **never** be commited to git or posted publicly
  - Use the command `rails credentials:edit` to view and edit the seeds, which requires a master key (above) and may require `EDITOR` environment variable
+
+### More Documentation
+ - [Official Rails Guides](https://guides.rubyonrails.org/)
+ - [Official Rails API](https://api.rubyonrails.org/)
+ - [HL7 FHIR](https://build.fhir.org/documentation.html)
 
 ## License
 
