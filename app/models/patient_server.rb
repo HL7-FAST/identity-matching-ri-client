@@ -4,6 +4,10 @@ class PatientServer < ApplicationRecord
   validates :base, format: { with: /\A(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?\z/ }
   validates :base, presence: true
 
+  validates :client_id, length: { maximum: 255 }
+  validates :identity_provider, length: { maximum: 255 }
+
+
   # construct url from base url
   # params:
   # 	args: strings or responds_to to_s
