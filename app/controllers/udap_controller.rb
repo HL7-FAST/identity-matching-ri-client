@@ -51,10 +51,10 @@ class UDAPController < ApplicationController
         'client_name' => 'Identity Matching RI Client',
         'logo_uri' => image_uri('fast_logo_2022_sm.png'),
         'redirect_uris' => [ udap_redirect_url ],
-        'grant_types' => ['authorization_code'], # TODO: blank array option will allow for cancelled registration
+        'grant_types' => ['authorization_code'], # blank array option would cancel registration
         'response_types' => ['code'],
         'token_endpoint_auth_method' => 'private_key_jwt',
-        'scope' => 'udap */*' # TODO: get scope from input?
+        'scope' => 'udap */*'
     }
 
     ## Using self-signed cert to build end-entity certificate
