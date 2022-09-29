@@ -14,7 +14,7 @@
             </ul>
 
             <div class="mt-4">
-                <%= f.submit value: "Sign In via UDAP Tiered OAuth2", class: "btn btn-primary mb-2" %>
+                <%= f.submit value: "Sign In via UDAP Tiered OAuth2", class: "btn btn-primary mb-2", remote: false %>
                 <%= link_to "Register with UDAP Dynamic Client Registration", udap_start_url, class: "btn btn-dark mb-2" %>
                 <%= link_to "Change Patient Server Base (Resource Server)", root_url, class: "btn btn-secondary" %>
             </div>
