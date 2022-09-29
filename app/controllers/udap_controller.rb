@@ -43,7 +43,7 @@ class UDAPController < ApplicationController
 
     software_statement = {
         'iss' => "https://test.healthtogo.me/udap-sandbox/mitre", #root_url,
-        'sub' => root_url,
+        'sub' => "https://test.healthtogo.me/udap-sandbox/mitre", # root_url,
         'aud' => @udap_metadata['registration_endpoint'],
         'iat' => (now = Time.now).to_i,
         'exp' => (now + 5 * 60).to_i, # exp in 5 mins
