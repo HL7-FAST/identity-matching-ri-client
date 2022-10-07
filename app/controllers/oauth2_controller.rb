@@ -86,8 +86,7 @@ class Oauth2Controller < ApplicationController
             :grant_type => 'authorization_code',
             :code => @code,
             :redirect_uri => oauth2_redirect_url,
-            :client_id => ENV["CLIENT_ID"],
-            :client_secret => ENV["CLIENT_SECRET"]
+            :client_id => @patient_server.client_id
         }
         @token_url = session[:token_url]
 		#Rails.logger.debug "== GETTING TOKEN =="
