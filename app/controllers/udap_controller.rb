@@ -50,7 +50,7 @@ class UDAPController < ApplicationController
         'jti' => SecureRandom.uuid,
         'client_name' => 'Identity Matching RI Client',
         'logo_uri' => image_uri('fast_logo_2022_sm.png'),
-        'redirect_uris' => [ udap_redirect_url ],
+        'redirect_uris' => [ udap_redirect_url, oauth2_redirect_url ],
         'grant_types' => ['authorization_code'], # blank array option would cancel registration
         'response_types' => ['code'],
         'token_endpoint_auth_method' => 'private_key_jwt',
