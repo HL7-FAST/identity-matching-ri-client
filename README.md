@@ -1,5 +1,5 @@
 # Identity Matching & UDAP Security RI Client
-Reference implementation (RI) client for [Interoperable Identity and Patient Matching](http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/) and [UDAP Security](https://build.fhir.org/ig/HL7/fhir-udap-security-ig/) implementation guides. The client's primary features are: patient matching requests, patient identity weighted score validation, UDAP dynamic client registration, and UDAP tiered OAuth2. You can try this app out at <https://fhir-secid-herokuapp.com> until [November 28th 2022](https://blog.heroku.com/next-chapter).
+Reference implementation (RI) client for [Interoperable Identity and Patient Matching](http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/) and [UDAP Security](https://build.fhir.org/ig/HL7/fhir-udap-security-ig/) implementation guides. The client's primary features are: patient matching requests, patient identity weighted score validation, UDAP dynamic client registration, and UDAP tiered OAuth2. .
 
 ## Dependencies
  - [Ruby 3.1.2](https://www.ruby-lang.org/en/)
