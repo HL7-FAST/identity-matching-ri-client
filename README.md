@@ -1,3 +1,6 @@
+#Archive Note
+This Repo has been archived. The replacement RI is located here: https://github.com/HL7-FAST/identity-matching-ui
+
 # Identity Matching & UDAP Security RI Client
 Reference implementation (RI) client for [Interoperable Identity and Patient Matching](http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/) and [UDAP Security](https://build.fhir.org/ig/HL7/fhir-udap-security-ig/) implementation guides. The client's primary features are: patient matching requests, patient identity weighted score validation, UDAP dynamic client registration, and UDAP tiered OAuth2. .
 
